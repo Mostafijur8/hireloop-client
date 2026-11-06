@@ -1,13 +1,12 @@
 import { Navbar } from "@/components/navbar";
+import { Hero } from "@/components/hero";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#1d1d1d] px-[15px]">
-      <p className="absolute left-[15px] top-[7px] text-[14px] text-[#777]">
-        Homepage
-      </p>
-      <div className="mx-auto mt-[34px] min-h-[110px] max-w-[1200px] bg-[#242424]">
+    <main className="min-h-screen bg-[#050507] px-[15px]">
+      <div className="mx-auto max-w-[1200px] bg-[#050507]">
         <Navbar />
+        <Hero />
       </div>
     </main>
   );
