@@ -32,10 +32,9 @@ export default function SignUpPage() {
         name: String(form.get("name") ?? "").trim(),
         email: String(form.get("email") ?? "").trim(),
         password: String(form.get("password") ?? ""),
+        requestedRole: String(form.get("requestedRole") ?? "seeker"),
         callbackURL: "/",
       });
-
-      console.log("Signup response:", { data, error });
 
       if (error) setError(error.message ?? "Signup failed. Please try again.");
       else window.location.assign("/");
@@ -146,6 +145,22 @@ export default function SignUpPage() {
                 placeholder="you@example.com"
                 className="h-11 w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-violet-400/60 focus:ring-2 focus:ring-violet-500/15"
               />
+            </label>
+            <label className="block space-y-2 text-sm font-medium text-zinc-200">
+              I&apos;m joining as
+              <select
+                name="requestedRole"
+                required
+                defaultValue="seeker"
+                className="h-11 w-full rounded-xl border border-white/10 bg-[#111114] px-3.5 text-sm text-white outline-none transition focus:border-violet-400/60 focus:ring-2 focus:ring-violet-500/15"
+              >
+                <option value="seeker">Job seeker</option>
+                <option value="recruiter">Recruiter</option>
+                <option value="admin">Admin (request access)</option>
+              </select>
+              <span className="block text-xs font-normal text-zinc-500">
+                Admin access must be granted by an existing administrator.
+              </span>
             </label>
             <label className="block space-y-2 text-sm font-medium text-zinc-200">
               Password
