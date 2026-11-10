@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { authClient, useSession } from "@/lib/auth-client";
 
 const links = [
   { label: "Browse Jobs", href: "/jobs" },
@@ -12,6 +13,12 @@ const links = [
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: session, isPending } = useSession();
+
+  async function handleSignOut() {
+    const { error } = await authClient.signOut();
+    if (!error) window.location.assign("/");
+  }
 
   return (
     <nav
@@ -42,29 +49,47 @@ export function Navbar() {
               </a>
             ))}
             <span aria-hidden="true" className="h-[18px] w-px bg-white/15" />
-            <Button
-              nativeButton={false}
-              render={<a href="/sign-in" />}
-              variant="ghost"
-              className="h-auto px-0 text-[12px] font-medium text-[#7864ff] hover:bg-transparent hover:text-[#a093ff]"
-            >
-              Sign In
-            </Button>
-            <Button
-              nativeButton={false}
-              render={<a href="/sign-up" />}
-              variant="ghost"
-              className="h-auto px-0 text-[12px] font-medium text-[#7864ff] hover:bg-transparent hover:text-[#a093ff]"
-            >
-              Sign Up
-            </Button>
-            <Button
-              nativeButton={false}
-              render={<a href="/sign-up" />}
-              className="h-auto rounded-[9px] bg-[#6650f5] px-[17px] py-[10px] text-[12px] font-medium text-white shadow-[0_3px_12px_rgba(102,80,245,0.28)] hover:bg-[#7663ff]"
-            >
-              Get Started
-            </Button>
+            {!isPending && (session ? (
+              <>
+                <span className="text-[12px] text-white">
+                  Welcome, {session.user.name || "there"}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={handleSignOut}
+                  className="h-auto px-0 text-[12px] font-medium text-[#7864ff] hover:bg-transparent hover:text-[#a093ff]"
+                >
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  nativeButton={false}
+                  render={<a href="/sign-in" />}
+                  variant="ghost"
+                  className="h-auto px-0 text-[12px] font-medium text-[#7864ff] hover:bg-transparent hover:text-[#a093ff]"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  nativeButton={false}
+                  render={<a href="/sign-up" />}
+                  variant="ghost"
+                  className="h-auto px-0 text-[12px] font-medium text-[#7864ff] hover:bg-transparent hover:text-[#a093ff]"
+                >
+                  Sign Up
+                </Button>
+                <Button
+                  nativeButton={false}
+                  render={<a href="/sign-up" />}
+                  className="h-auto rounded-[9px] bg-[#6650f5] px-[17px] py-[10px] text-[12px] font-medium text-white shadow-[0_3px_12px_rgba(102,80,245,0.28)] hover:bg-[#7663ff]"
+                >
+                  Get Started
+                </Button>
+              </>
+            ))}
           </div>
 
           <Button
@@ -94,28 +119,49 @@ export function Navbar() {
                   {link.label}
                 </a>
               ))}
-              <a
-                href="/sign-in"
-                onClick={() => setMenuOpen(false)}
-                className="rounded-md px-3 py-2 text-sm font-medium text-[#9182ff] hover:bg-white/5"
-              >
-                Sign In
-              </a>
-              <a
-                href="/sign-up"
-                onClick={() => setMenuOpen(false)}
-                className="rounded-md px-3 py-2 text-sm font-medium text-[#9182ff] hover:bg-white/5"
-              >
-                Sign Up
-              </a>
-              <Button
-                nativeButton={false}
-                render={<a href="/sign-up" />}
-                className="mt-2 w-full rounded-[9px] bg-[#6650f5] text-white hover:bg-[#7663ff]"
-                onClick={() => setMenuOpen(false)}
-              >
-                Get Started
-              </Button>
+              {!isPending && (session ? (
+                <>
+                  <span className="px-3 py-2 text-sm text-white">
+                    Welcome, {session.user.name || "there"}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="justify-start px-3 text-sm font-medium text-[#9182ff] hover:bg-white/5 hover:text-violet-200"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      void handleSignOut();
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <a
+                    href="/sign-in"
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-md px-3 py-2 text-sm font-medium text-[#9182ff] hover:bg-white/5"
+                  >
+                    Sign In
+                  </a>
+                  <a
+                    href="/sign-up"
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-md px-3 py-2 text-sm font-medium text-[#9182ff] hover:bg-white/5"
+                  >
+                    Sign Up
+                  </a>
+                  <Button
+                    nativeButton={false}
+                    render={<a href="/sign-up" />}
+                    className="mt-2 w-full rounded-[9px] bg-[#6650f5] text-white hover:bg-[#7663ff]"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Get Started
+                  </Button>
+                </>
+              ))}
             </div>
           </div>
         )}

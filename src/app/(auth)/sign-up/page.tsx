@@ -32,7 +32,7 @@ export default function SignUpPage() {
         name: String(form.get("name") ?? "").trim(),
         email: String(form.get("email") ?? "").trim(),
         password: String(form.get("password") ?? ""),
-        requestedRole: String(form.get("requestedRole") ?? "seeker"),
+        role: String(form.get("requestedRole") ?? "seeker"),
         callbackURL: "/",
       });
 
