@@ -63,7 +63,8 @@ const dashboardByRole: Record<
     icon: BriefcaseBusiness,
     items: [
       { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard/recruiter" },
-      { label: "Manage Jobs", icon: BriefcaseBusiness },
+      { label: "Manage Jobs", icon: BriefcaseBusiness, href: "/dashboard/recruiter/jobs" },
+      { label: "Add Jobs", icon: BriefcaseBusiness, href: "/dashboard/recruiter/jobs/new" },
       { label: "Applications", icon: FileText },
       { label: "Settings", icon: Settings },
     ],
@@ -97,6 +98,13 @@ export function AppSidebar() {
   const router = useRouter();
   const role = isUserRole(session?.user?.role) ? session.user.role : "seeker";
   const workspace = dashboardByRole[role];
+  const activeHref = workspace.items
+    .map((item) => item.href)
+    .filter(
+      (href): href is string =>
+        Boolean(href) && (pathname === href || pathname.startsWith(`${href}/`)),
+    )
+    .sort((a, b) => b.length - a.length)[0];
 
   // Better Auth session বন্ধ করে sign-in page-এ পাঠায়।
   async function handleSignOut() {
@@ -146,7 +154,7 @@ export function AppSidebar() {
           <SidebarMenu className="gap-0.5">
             {workspace.items.map((item) => {
               const Icon = item.icon;
-              const active = item.href === pathname;
+              const active = item.href === activeHref;
 
               return (
                 <SidebarMenuItem key={item.label}>
@@ -176,8 +184,9 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              disabled
-              title={`${workspace.action} will be available soon`}
+              render={role === "recruiter" ? <Link href="/dashboard/recruiter/jobs/new" /> : undefined}
+              disabled={role !== "recruiter"}
+              title={role === "recruiter" ? workspace.action : `${workspace.action} will be available soon`}
               className="h-[30px] justify-center rounded-md bg-white text-[11px] font-semibold text-[#111]! opacity-100! hover:bg-zinc-200! hover:text-[#111]! disabled:opacity-100"
             >
               <span>{workspace.action}</span>
