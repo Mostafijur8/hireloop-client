@@ -6,6 +6,7 @@ import { AppSidebar } from "../components/app-sidebar";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider
+      className="min-h-svh bg-[#050507]"
       style={
         {
           "--sidebar-width": "12rem",
