@@ -1,25 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   BriefcaseBusiness, Code2, Globe2, MapPin, Megaphone, MoreVertical, Pencil,
   Plus, ShieldCheck, Trash2, Users, Workflow,
 } from "lucide-react";
 import { useToast } from "@/components/toast-provider";
+import getJobs from "@/lib/api/jobs";
 
-const jobs = [
-  { title: "Frontend Developer", department: "Engineering", company: "HirePulse Network", location: "Remote (New York, USA)", remote: true, type: "Full-time", salary: "€25 – €40 / hr", applicants: 34, deadline: "May 30, 2025", posted: "Posted 4d ago", icon: Code2, color: "text-indigo-400", dept: "text-sky-400", active: true },
-  { title: "Senior Product Designer", department: "Design", company: "HirePulse Labs", location: "London, UK (Hybrid)", type: "Full-time", salary: "€90k – €115k / yr", applicants: 19, deadline: "Jun 14, 2025", posted: "Posted 1w ago", icon: Workflow, color: "text-orange-400", dept: "text-orange-400", active: true },
-  { title: "DevOps Specialist", department: "Infrastructure", company: "HirePulse Platform", location: "Berlin, Germany", type: "Full-time", salary: "€95k – €120k / yr", applicants: 12, deadline: "Jun 30, 2025", posted: "Posted 2w ago", icon: BriefcaseBusiness, color: "text-cyan-400", dept: "text-sky-400", active: true },
-  { title: "Product Marketing Lead", department: "Marketing", company: "HirePulse Network", location: "Remote (EU/US)", remote: true, type: "Full-time", salary: "€80k – €105k / yr", applicants: 27, deadline: "Jul 15, 2025", posted: "Posted 5d ago", icon: Megaphone, color: "text-violet-300", dept: "text-violet-300", active: true },
-  { title: "QA Automation Engineer", department: "Quality", company: "HirePulse Platform", location: "Dublin, Ireland (Hybrid)", type: "Part-time", salary: "€35 – €50 / hr", applicants: 8, deadline: "May 01, 2025", posted: "Closed", icon: ShieldCheck, color: "text-blue-400", dept: "text-indigo-300", active: false },
-];
+
 
 // Recruiter-এর posted jobs-গুলো table আকারে দেখায় এবং Add/Update action দেয়।
 export default function ManageJobsPage() {
+  const [jobRows, setJobRows] = useState<any[]>([]);
+
+  useEffect(() => {
+    getJobs().then((data) => {
+      setJobRows(Array.isArray(data) ? data : data?.jobs ?? []);
+    }).catch((error) => {
+      console.error("Failed to load jobs", error);
+    });
+  }, []);
+
   const { toast } = useToast();
-  const [jobRows, setJobRows] = useState(jobs);
+
 
   function removeJob(title: string) {
     setJobRows((current) => current.filter((job) => job.title !== title));
@@ -51,7 +56,9 @@ export default function ManageJobsPage() {
           </thead>
           <tbody>
             {jobRows.map((job) => {
-              const Icon = job.icon;
+              // API records are JSON, so they cannot contain the Lucide component
+              // functions used by the old in-file sample data.
+              const Icon = typeof job.icon === "function" ? job.icon : BriefcaseBusiness;
               return <tr key={job.title} className="h-[54px] border-t border-[#242427] text-[10px]">
                 <td className="px-[14px]"><div className="flex items-center gap-[7px]"><span className={`flex size-[25px] shrink-0 items-center justify-center rounded-[6px] bg-[#242428] ${job.color}`}><Icon className="size-[14px]" /></span><div className="min-w-0"><div className="truncate font-medium leading-[14px] text-[#f2f2f4]">{job.title}</div><div className={`mt-[1px] text-[8px] leading-[12px] ${job.dept}`}>{job.department}</div></div></div></td>
                 <td className="px-[14px]"><div className="truncate font-medium leading-[13px]">{job.company}</div><div className="mt-[1px] flex items-center gap-[4px] truncate text-[8px] leading-[12px] text-[#a2a2ab]">{job.remote ? <Globe2 className="size-[13px] shrink-0"/> : <MapPin className="size-[13px] shrink-0"/>}{job.location}</div></td>
