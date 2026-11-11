@@ -14,6 +14,7 @@ import {
 
 type DashboardRole = "admin" | "recruiter" | "seeker";
 
+// প্রতিটি role-এর dashboard-এ দেখানোর শিরোনাম, পরিসংখ্যান ও করণীয়।
 const dashboardContent: Record<
   DashboardRole,
   {
@@ -91,6 +92,7 @@ const dashboardContent: Record<
 };
 
 export function DashboardHome({ role }: { role: DashboardRole }) {
+  // নির্বাচিত role-এর কনফিগারেশন নিয়ে একই layout-এ dashboard তৈরি করে।
   const content = dashboardContent[role];
   const RoleIcon = content.icon;
 

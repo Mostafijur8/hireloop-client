@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { authClient, useSession } from "@/lib/auth-client";
+import { useToast } from "@/components/toast-provider";
+import { useRouter } from "next/navigation";
 
 const links = [
   { label: "Browse Jobs", href: "/jobs" },
@@ -11,13 +13,26 @@ const links = [
   { label: "Pricing", href: "/pricing" },
 ];
 
+// Desktop ও mobile navigation, session greeting এবং sign-in/out action দেখায়।
 export function Navbar() {
+  const { toast } = useToast();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: session, isPending } = useSession();
 
+  // সফল sign-out-এর পর home page-এ ফেরত নেয়।
   async function handleSignOut() {
-    const { error } = await authClient.signOut();
-    if (!error) window.location.assign("/");
+    try {
+      const { error } = await authClient.signOut();
+      if (error) {
+        toast(error.message ?? "Could not sign out.", "error");
+        return;
+      }
+      toast("Signed out successfully.", "success");
+      router.replace("/");
+    } catch {
+      toast("Could not sign out. Please try again.", "error");
+    }
   }
 
   return (

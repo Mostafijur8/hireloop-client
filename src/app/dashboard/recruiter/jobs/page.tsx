@@ -1,8 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import {
   BriefcaseBusiness, Code2, Globe2, MapPin, Megaphone, MoreVertical, Pencil,
   Plus, ShieldCheck, Trash2, Users, Workflow,
 } from "lucide-react";
+import { useToast } from "@/components/toast-provider";
 
 const jobs = [
   { title: "Frontend Developer", department: "Engineering", company: "HirePulse Network", location: "Remote (New York, USA)", remote: true, type: "Full-time", salary: "€25 – €40 / hr", applicants: 34, deadline: "May 30, 2025", posted: "Posted 4d ago", icon: Code2, color: "text-indigo-400", dept: "text-sky-400", active: true },
@@ -12,7 +16,16 @@ const jobs = [
   { title: "QA Automation Engineer", department: "Quality", company: "HirePulse Platform", location: "Dublin, Ireland (Hybrid)", type: "Part-time", salary: "€35 – €50 / hr", applicants: 8, deadline: "May 01, 2025", posted: "Closed", icon: ShieldCheck, color: "text-blue-400", dept: "text-indigo-300", active: false },
 ];
 
+// Recruiter-এর posted jobs-গুলো table আকারে দেখায় এবং Add/Update action দেয়।
 export default function ManageJobsPage() {
+  const { toast } = useToast();
+  const [jobRows, setJobRows] = useState(jobs);
+
+  function removeJob(title: string) {
+    setJobRows((current) => current.filter((job) => job.title !== title));
+    toast(`${title} removed from this list view.`, "success");
+  }
+
   return (
     <main className="min-h-[calc(100svh-3rem)] min-w-0 flex-1 overflow-x-hidden bg-[#121212] px-[7px] pb-8 pt-[16px] text-white sm:px-[7px]">
       <div className="mb-[5px] flex items-center gap-[7px] pl-0 text-[10px] leading-4 text-[#85858e]">
@@ -37,7 +50,7 @@ export default function ManageJobsPage() {
             <tr>{["Job Title & Dept", "Company & Location", "Type", "Compensation", "Applicants", "Status", "Deadline", "Actions"].map((label) => <th key={label} className="whitespace-nowrap px-[14px]">{label}</th>)}</tr>
           </thead>
           <tbody>
-            {jobs.map((job) => {
+            {jobRows.map((job) => {
               const Icon = job.icon;
               return <tr key={job.title} className="h-[54px] border-t border-[#242427] text-[10px]">
                 <td className="px-[14px]"><div className="flex items-center gap-[7px]"><span className={`flex size-[25px] shrink-0 items-center justify-center rounded-[6px] bg-[#242428] ${job.color}`}><Icon className="size-[14px]" /></span><div className="min-w-0"><div className="truncate font-medium leading-[14px] text-[#f2f2f4]">{job.title}</div><div className={`mt-[1px] text-[8px] leading-[12px] ${job.dept}`}>{job.department}</div></div></div></td>
@@ -47,7 +60,7 @@ export default function ManageJobsPage() {
                 <td className="px-[14px]"><span className="inline-flex items-center gap-[4px] whitespace-nowrap text-[9px] text-[#d4d0ff]"><Users className="size-[14px]" />{job.applicants} Candidates</span></td>
                 <td className="px-[14px]"><span className={`inline-flex items-center gap-[5px] rounded-full px-[8px] py-[5px] text-[8px] ${job.active ? "bg-[#10321f] text-[#5ee28d]" : "bg-[#252527] text-[#a2a2a9]"}`}><span className={`size-[4px] rounded-full ${job.active ? "bg-[#2ce078]" : "bg-[#77777d]"}`} />{job.active ? "Active" : "Expired"}</span></td>
                 <td className="whitespace-nowrap px-[14px]"><div className="leading-[13px]">{job.deadline}</div><div className="text-[8px] leading-[12px] text-[#66666d]">{job.posted}</div></td>
-                <td className="px-[12px]"><div className="flex items-center justify-end gap-[5px]"><Link href="/dashboard/recruiter/jobs/new" className="inline-flex h-[24px] items-center gap-[4px] rounded-[7px] bg-[#242044] px-[8px] text-[8px] text-[#d1caff] hover:bg-[#332d61]"><Pencil className="size-[12px]"/>Update</Link><button aria-label={`Delete ${job.title}`} className="flex size-[24px] items-center justify-center rounded-[7px] bg-[#242426] text-[#9c9ca4] hover:bg-[#3b2424] hover:text-red-300"><Trash2 className="size-[13px]"/></button><button aria-label={`More actions for ${job.title}`} className="flex size-[22px] items-center justify-center text-[#9c9ca4] hover:text-white"><MoreVertical className="size-[15px]"/></button></div></td>
+                <td className="px-[12px]"><div className="flex items-center justify-end gap-[5px]"><Link href="/dashboard/recruiter/jobs/new" className="inline-flex h-[24px] items-center gap-[4px] rounded-[7px] bg-[#242044] px-[8px] text-[8px] text-[#d1caff] hover:bg-[#332d61]"><Pencil className="size-[12px]"/>Update</Link><button type="button" onClick={() => removeJob(job.title)} aria-label={`Delete ${job.title}`} className="flex size-[24px] items-center justify-center rounded-[7px] bg-[#242426] text-[#9c9ca4] hover:bg-[#3b2424] hover:text-red-300"><Trash2 className="size-[13px]"/></button><button type="button" aria-label={`More actions for ${job.title}`} className="flex size-[22px] items-center justify-center text-[#9c9ca4] hover:text-white"><MoreVertical className="size-[15px]"/></button></div></td>
               </tr>;
             })}
           </tbody>

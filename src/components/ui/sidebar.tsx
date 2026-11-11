@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/tooltip"
 import { PanelLeftIcon } from "lucide-react"
 
+// Sidebar open/closed preference browser cookie-তে রাখার সেটিংস।
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
@@ -32,6 +33,7 @@ const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
+// Provider থেকে sidebar-এর state ও toggle function child component-এ দেয়।
 type SidebarContextProps = {
   state: "expanded" | "collapsed"
   open: boolean
@@ -44,6 +46,7 @@ type SidebarContextProps = {
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null)
 
+// Sidebar provider-এর context পড়ার hook; provider ছাড়া ব্যবহার হলে error দেয়।
 function useSidebar() {
   const context = React.useContext(SidebarContext)
   if (!context) {
@@ -53,6 +56,7 @@ function useSidebar() {
   return context
 }
 
+// Sidebar-এর responsive state, keyboard shortcut এবং content layout নিয়ন্ত্রণ করে।
 function SidebarProvider({
   defaultOpen = true,
   open: openProp,
@@ -149,6 +153,7 @@ function SidebarProvider({
   )
 }
 
+// Desktop/mobile mode অনুযায়ী sidebar container ও collapse behavior render করে।
 function Sidebar({
   side = "left",
   variant = "sidebar",
@@ -251,6 +256,7 @@ function Sidebar({
   )
 }
 
+// Sidebar খোলা বা বন্ধ করার accessible button।
 function SidebarTrigger({
   className,
   onClick,
@@ -277,6 +283,7 @@ function SidebarTrigger({
   )
 }
 
+// Sidebar-এর পাশে pointer/keyboard দিয়ে collapse করার rail control।
 function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
   const { toggleSidebar } = useSidebar()
 
@@ -302,6 +309,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
   )
 }
 
+// Sidebar-এর পাশে মূল page content-এর inset layout তৈরি করে।
 function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
   return (
     <main
@@ -315,6 +323,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
   )
 }
 
+// Sidebar-এর ভেতরে search বা text entry field-এর shared style।
 function SidebarInput({
   className,
   ...props
@@ -329,6 +338,7 @@ function SidebarInput({
   )
 }
 
+// Sidebar-এর উপরের অংশের layout wrapper।
 function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -340,6 +350,7 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+// Sidebar-এর নিচের অংশের layout wrapper।
 function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -351,6 +362,7 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+// Sidebar-এর group-এর মাঝে visual divider দেখায়।
 function SidebarSeparator({
   className,
   ...props
@@ -365,6 +377,7 @@ function SidebarSeparator({
   )
 }
 
+// Sidebar-এর scrollable main content wrapper।
 function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -379,6 +392,7 @@ function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+// Related sidebar links-কে group আকারে সাজায়।
 function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -390,6 +404,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+// Sidebar group-এর label ও optional group action সাজায়।
 function SidebarGroupLabel({
   className,
   render,
@@ -438,6 +453,7 @@ function SidebarGroupAction({
   })
 }
 
+// Group label-এর নিচে থাকা navigation content wrapper।
 function SidebarGroupContent({
   className,
   ...props
@@ -452,6 +468,7 @@ function SidebarGroupContent({
   )
 }
 
+// Sidebar navigation-এর list এবং individual item wrapper।
 function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
@@ -463,6 +480,7 @@ function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
   )
 }
 
+// Sidebar list-এর একটি menu row-এর wrapper।
 function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
@@ -496,6 +514,7 @@ const sidebarMenuButtonVariants = cva(
   }
 )
 
+// Sidebar navigation item-এর active, disabled ও tooltip behavior দেয়।
 function SidebarMenuButton({
   render,
   isActive = false,
@@ -550,6 +569,7 @@ function SidebarMenuButton({
   )
 }
 
+// Menu row-এর পাশে অতিরিক্ত action বা badge দেখানোর components।
 function SidebarMenuAction({
   className,
   render,
@@ -597,6 +617,7 @@ function SidebarMenuBadge({
   )
 }
 
+// Menu content load হওয়ার সময় placeholder row দেখায়।
 function SidebarMenuSkeleton({
   className,
   showIcon = false,
@@ -635,6 +656,7 @@ function SidebarMenuSkeleton({
   )
 }
 
+// Nested sidebar navigation-এর list ও link components।
 function SidebarMenuSub({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul

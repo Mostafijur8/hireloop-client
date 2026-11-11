@@ -2,7 +2,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "../components/app-sidebar";
 
 
-
+// ড্যাশবোর্ডের সব route-এ role অনুযায়ী sidebar ও collapsible layout যোগ করে।
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider

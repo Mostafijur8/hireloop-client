@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 
+// MongoDB connection ও Better Auth-এর server-side configuration।
 const client = new MongoClient(process.env.MONGODB_URI as string);
 const db = client.db("hireloopDB");
 

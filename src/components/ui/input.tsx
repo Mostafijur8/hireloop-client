@@ -2,6 +2,7 @@ import * as React from "react"
 import { Input as InputPrimitive } from "@base-ui/react/input"
 import { cn } from "cn"
 
+// Base UI input-এর উপর shared style ও data-slot যুক্ত করে।
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <InputPrimitive

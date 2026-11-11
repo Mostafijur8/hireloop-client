@@ -3,6 +3,7 @@ import globe from "@/images/globe.png";
 import { ArrowUpRight, MapPin, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+// Hero অংশের নিচে দেখানো platform-এর marketing statistics।
 const stats = [
   { value: "10K+", label: "Active jobs" },
   { value: "8K+", label: "Companies" },

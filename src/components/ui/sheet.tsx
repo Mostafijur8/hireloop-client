@@ -7,6 +7,7 @@ import { cn } from "cn"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 
+// Sheet-এর open state এবং trigger, overlay ও content-এর root wrappers।
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
 }
@@ -23,6 +24,7 @@ function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
   return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
 }
 
+// Sheet খোলা থাকলে পেছনের page-এ dimmed backdrop দেখায়।
 function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   return (
     <SheetPrimitive.Backdrop
@@ -36,6 +38,7 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   )
 }
 
+// Portal-এ side panel render করে; overlay ও close behavior যুক্ত করে।
 function SheetContent({
   className,
   children,
@@ -80,6 +83,7 @@ function SheetContent({
   )
 }
 
+// Sheet title/description-এর জন্য header ও footer layout wrappers।
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

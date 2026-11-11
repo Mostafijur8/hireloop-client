@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description: "Sign in to your Hireloop account.",
 };
 
+// Sign-in route-এর জন্য পেজ metadata যোগ করে, children অপরিবর্তিত রাখে।
 export default function SignInLayout({ children }: Readonly<{ children: ReactNode }>) {
   return children;
 }

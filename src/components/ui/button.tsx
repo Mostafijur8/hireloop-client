@@ -39,6 +39,7 @@ const buttonVariants = cva(
   }
 )
 
+// Base UI button-কে project-এর shared visual variants সহ expose করে।
 function Button({
   className,
   variant = "default",

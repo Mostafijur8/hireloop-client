@@ -3,6 +3,7 @@
 import { Separator as SeparatorPrimitive } from "@base-ui/react/separator"
 import { cn } from "cn"
 
+// Horizontal বা vertical divider-কে shared border style-এ render করে।
 function Separator({
   className,
   orientation = "horizontal",

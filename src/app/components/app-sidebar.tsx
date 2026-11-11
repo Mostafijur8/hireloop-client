@@ -27,6 +27,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { authClient, useSession } from "@/lib/auth-client";
+import { useToast } from "@/components/toast-provider";
 
 type UserRole = "admin" | "recruiter" | "seeker";
 
@@ -37,6 +38,7 @@ type MenuItem = {
 };
 
 // প্রতিটি role-এর জন্য profile card, sidebar menu এবং নিচের action label নির্ধারণ করে।
+// প্রতিটি user role-এর sidebar title, menu item ও primary action নির্ধারণ করে।
 const dashboardByRole: Record<
   UserRole,
   { title: string; subtitle: string; url: string; icon: LucideIcon; items: MenuItem[]; action: string }
@@ -91,7 +93,9 @@ function isUserRole(role: unknown): role is UserRole {
   return role === "admin" || role === "recruiter" || role === "seeker";
 }
 
+// Session role দেখে active navigation, profile এবং sign-out action দেখায়।
 export function AppSidebar() {
+  const { toast } = useToast();
   // লগইন করা user, বর্তমান route এবং sign-out-এর পর redirect করার router নেয়।
   const { data: session } = useSession();
   const pathname = usePathname();
@@ -108,8 +112,17 @@ export function AppSidebar() {
 
   // Better Auth session বন্ধ করে sign-in page-এ পাঠায়।
   async function handleSignOut() {
-    await authClient.signOut();
-    router.replace("/sign-in");
+    try {
+      const { error } = await authClient.signOut();
+      if (error) {
+        toast(error.message ?? "Could not sign out.", "error");
+        return;
+      }
+      toast("Signed out successfully.", "success");
+      router.replace("/sign-in");
+    } catch {
+      toast("Could not sign out. Please try again.", "error");
+    }
   }
 
   return (

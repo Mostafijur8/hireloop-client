@@ -14,12 +14,18 @@ import {
 } from "lucide-react";
 import logo from "@/images/logo.png";
 import { authClient } from "@/lib/auth-client";
+import { useToast } from "@/components/toast-provider";
+import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
+  const { toast } = useToast();
+  const router = useRouter();
+  // Submit progress, password visibility ও authentication error-এর UI state।
   const [pending, setPending] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
 
+  // নতুন account-এর তথ্য Better Auth-এ পাঠিয়ে সফল হলে home page-এ নেয়।
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
@@ -36,10 +42,19 @@ export default function SignUpPage() {
         callbackURL: "/",
       });
 
-      if (error) setError(error.message ?? "Signup failed. Please try again.");
-      else window.location.assign("/");
+      if (error) {
+        const message = error.message ?? "Signup failed. Please try again.";
+        setError(message);
+        toast(message, "error");
+      } else {
+        toast("Account created successfully.", "success");
+        router.replace("/");
+        router.refresh();
+      }
     } catch {
-      setError("Couldn't connect. Please try again.");
+      const message = "Couldn't connect. Please try again.";
+      setError(message);
+      toast(message, "error");
     } finally {
       setPending(false);
     }
@@ -57,6 +72,7 @@ export default function SignUpPage() {
         <ArrowLeft className="size-4" />
         Back to home
       </Link>
+      {/* বড় স্ক্রিনে পরিচিতিমূলক panel এবং sign-up form পাশাপাশি দেখায়। */}
       <div className="relative grid w-full max-w-[920px] overflow-hidden rounded-3xl border border-white/10 bg-[#0d0d11] shadow-[0_30px_100px_rgba(0,0,0,0.5)] md:grid-cols-[0.9fr_1.1fr]">
         <aside className="relative hidden flex-col justify-between overflow-hidden border-r border-white/10 bg-[radial-gradient(ellipse_at_20%_0%,rgba(98,75,245,0.24),transparent_48%),#0a0a0e] p-9 md:flex lg:p-12">
           <div className="relative z-10">

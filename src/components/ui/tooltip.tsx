@@ -3,6 +3,7 @@
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 import { cn } from "cn"
 
+// Tooltip-এর delay এবং Base UI provider context নিয়ন্ত্রণ করে।
 function TooltipProvider({
   delay = 0,
   ...props
@@ -16,6 +17,7 @@ function TooltipProvider({
   )
 }
 
+// Tooltip-এর root, trigger এবং styled popup-এর wrapper components।
 function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
 }
