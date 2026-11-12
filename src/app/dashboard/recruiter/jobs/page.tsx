@@ -18,6 +18,7 @@ import getJobs from "@/lib/api/jobs";
 type JobRow = {
   _id: string;
   title: string;
+  companyName?: string;
   department?: string;
   company?: string;
   location?: string;
@@ -188,7 +189,7 @@ export default function ManageJobsPage() {
                   </td>
                   <td className="px-[14px]">
                     <div className="truncate font-medium leading-[13px]">
-                      {job.company}
+                      {job.companyName ?? job.company ?? "—"}
                     </div>
                     <div className="mt-[1px] flex items-center gap-[4px] truncate text-[8px] leading-[12px] text-[#a2a2ab]">
                       {isRemote ? (

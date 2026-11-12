@@ -1,6 +1,7 @@
 // Job create endpoint-এ পাঠানো তথ্যের TypeScript contract।
 export type Job = {
   title: string;
+  companyName?: string;
   company?: string;
   location: string;
   type: string;
