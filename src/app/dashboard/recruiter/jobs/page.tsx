@@ -16,21 +16,54 @@ import { JobDeleteDialog } from "@/app/components/alertDialog/jobDeleteDialog";
 import getJobs from "@/lib/api/jobs";
 
 type JobRow = {
+  _id: string;
   title: string;
   department?: string;
   company?: string;
   location?: string;
   remote?: boolean;
   type?: string;
+  status?: string;
   salary?: string;
+  salaryRange?: {
+    min?: string;
+    max?: string;
+    currency?: string;
+    period?: string;
+  };
   applicants?: number;
-  active?: boolean;
   deadline?: string;
+  createdAt?: string;
   posted?: string;
   color?: string;
   dept?: string;
   icon?: ComponentType<{ className?: string }>;
 };
+
+function formatJobDate(value?: string) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  }).format(date);
+}
+
+function formatPostedAgo(value?: string) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+
+  const days = Math.max(0, Math.floor((Date.now() - date.getTime()) / 86_400_000));
+  if (days === 0) return "today";
+  if (days < 7) return `${days}d ago`;
+  if (days < 30) return `${Math.floor(days / 7)}w ago`;
+  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
+  return `${Math.floor(days / 365)}y ago`;
+}
 
 // Recruiter-এর posted jobs-গুলো table আকারে দেখায় এবং Add/Update action দেয়।
 export default function ManageJobsPage() {
@@ -48,9 +81,9 @@ export default function ManageJobsPage() {
 
   const { toast } = useToast();
 
-  function removeJob(title: string) {
-    setJobRows((current) => current.filter((job) => job.title !== title));
-    toast(`${title} removed from this list view.`, "success");
+  function removeJob(id: string) {
+    setJobRows((current) => current.filter((job) => job._id !== id));
+    toast("Job removed from this list view.", "success");
   }
 
   return (
@@ -119,9 +152,19 @@ export default function ManageJobsPage() {
               // functions used by the old in-file sample data.
               const Icon =
                 typeof job.icon === "function" ? job.icon : BriefcaseBusiness;
+              const isActive = job.status?.toLowerCase() === "active";
+              const isRemote =
+                job.remote ?? job.location?.toLowerCase().startsWith("remote") ?? false;
+              const locationLabel =
+                job.location?.toLowerCase() === "remote"
+                  ? "Remote (EU/US)"
+                  : job.location;
+              const salary = job.salaryRange
+                ? `${job.salaryRange.currency ?? ""} ${job.salaryRange.min ?? "—"}–${job.salaryRange.max ?? "—"}${job.salaryRange.period ? ` / ${job.salaryRange.period}` : ""}`.trim()
+                : job.salary ?? "—";
               return (
                 <tr
-                  key={job.title}
+                  key={job._id}
                   className="h-[54px] border-t border-[#242427] text-[10px]"
                 >
                   <td className="px-[14px]">
@@ -148,12 +191,12 @@ export default function ManageJobsPage() {
                       {job.company}
                     </div>
                     <div className="mt-[1px] flex items-center gap-[4px] truncate text-[8px] leading-[12px] text-[#a2a2ab]">
-                      {job.remote ? (
+                      {isRemote ? (
                         <Globe2 className="size-[13px] shrink-0" />
                       ) : (
                         <MapPin className="size-[13px] shrink-0" />
                       )}
-                      {job.location}
+                      {locationLabel}
                     </div>
                   </td>
                   <td className="px-[14px]">
@@ -162,7 +205,7 @@ export default function ManageJobsPage() {
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-[14px] text-[9px]">
-                    {job.salary}
+                    {salary}
                   </td>
                   <td className="px-[14px]">
                     <span className="inline-flex items-center gap-[4px] whitespace-nowrap text-[9px] text-[#d4d0ff]">
@@ -172,18 +215,18 @@ export default function ManageJobsPage() {
                   </td>
                   <td className="px-[14px]">
                     <span
-                      className={`inline-flex items-center gap-[5px] rounded-full px-[8px] py-[5px] text-[8px] ${job.active ? "bg-[#10321f] text-[#5ee28d]" : "bg-[#252527] text-[#a2a2a9]"}`}
+                      className={`inline-flex items-center gap-[5px] rounded-full px-[8px] py-[5px] text-[8px] ${isActive ? "bg-[#10321f] text-[#5ee28d]" : "bg-[#252527] text-[#a2a2a9]"}`}
                     >
                       <span
-                        className={`size-[4px] rounded-full ${job.active ? "bg-[#2ce078]" : "bg-[#77777d]"}`}
+                        className={`size-[4px] rounded-full ${isActive ? "bg-[#2ce078]" : "bg-[#77777d]"}`}
                       />
-                      {job.active ? "Active" : "Expired"}
+                      {job.status ?? "Unknown"}
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-[14px]">
-                    <div className="leading-[13px]">{job.deadline}</div>
+                    <div className="leading-[13px]">{formatJobDate(job.deadline)}</div>
                     <div className="text-[8px] leading-[12px] text-[#66666d]">
-                      {job.posted}
+                      Posted {formatPostedAgo(job.createdAt)}
                     </div>
                   </td>
                   <td className="px-[12px]">
@@ -196,8 +239,9 @@ export default function ManageJobsPage() {
                         Update
                       </Link>
                       <JobDeleteDialog
+                        jobId={job._id}
                         jobTitle={job.title}
-                        onConfirm={() => removeJob(job.title)}
+                        onConfirm={() => removeJob(job._id)}
                       />
                       <button
                         type="button"

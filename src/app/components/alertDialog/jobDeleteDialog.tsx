@@ -2,6 +2,7 @@
 
 import { Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { deleteJob } from "@/lib/action/jobs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,11 +17,21 @@ import {
 } from "@/components/ui/alert-dialog";
 
 type JobDeleteDialogProps = {
+  jobId: string;
   jobTitle: string;
   onConfirm: () => void;
 };
 
-export function JobDeleteDialog({ jobTitle, onConfirm }: JobDeleteDialogProps) {
+export function JobDeleteDialog({ jobId, jobTitle, onConfirm }: JobDeleteDialogProps) {
+  const handleDelete = async () => {
+    try {
+      await deleteJob(jobId);
+      onConfirm();
+    } catch (error) {
+      console.error("Failed to delete job", error);
+    }
+  };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger
@@ -49,7 +60,10 @@ export function JobDeleteDialog({ jobTitle, onConfirm }: JobDeleteDialogProps) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="text-black">Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={onConfirm}>
+          <AlertDialogAction
+            variant="destructive"
+            onClick={handleDelete}
+          >
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

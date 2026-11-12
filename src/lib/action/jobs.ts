@@ -18,3 +18,23 @@ export async function createjob(data: Job) {
 
   return result as { id: string };
 }
+
+
+// delete one job
+
+
+export const deleteJob = async (jobId: string) => {
+  const response = await fetch(`${API_URL}/jobs/${jobId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const result = await response.json().catch(() => null);
+    const message =
+      result?.error ?? result?.message ?? "Could not delete the job.";
+    throw new Error(`${message} (HTTP ${response.status})`);
+  }
+
+  return response;
+};

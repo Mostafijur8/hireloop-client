@@ -35,8 +35,10 @@ export default function NewJobsPage() {
     // বর্তমান API schema অনুযায়ী বর্ণনা, লোকেশন ও বেতনের তথ্য তৈরি।
     const job: Job = {
       title: String(formData.get("title") ?? "").trim(),
+      company: String(formData.get("company") ?? "").trim(),
       location: remote ? "Remote" : String(formData.get("location") ?? "").trim(),
       type: jobType,
+      deadline: String(formData.get("deadline") ?? "") || undefined,
       salaryRange: {
         min: String(formData.get("salaryMin") ?? "").trim(),
         max: String(formData.get("salaryMax") ?? "").trim(),
