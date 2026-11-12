@@ -17,13 +17,13 @@ import type { Job } from "@/types/job";
 import { useToast } from "@/components/toast-provider";
 
 const fieldClass =
-  "mt-1.5 h-[34px] w-full rounded-[9px] border border-transparent bg-[#202023] px-[11px] text-[11px] text-[#e5e5e7] outline-none placeholder:text-[#77777e] focus:border-[#6252ff]/70 focus:ring-2 focus:ring-[#6252ff]/15";
-const labelClass = "text-[10px] font-medium text-[#efeff1]";
+  "mt-1.5 h-[40px] w-full rounded-[9px] border border-transparent bg-[#202023] px-[12px] text-[14px] text-[#e5e5e7] outline-none placeholder:text-[#77777e] focus:border-[#6252ff]/70 focus:ring-2 focus:ring-[#6252ff]/15 lg:h-[46px] lg:text-[16px]";
+const labelClass = "text-[12px] font-medium text-[#efeff1] lg:text-[14px]";
 
 // প্রতিটি ফর্ম সেকশনের নম্বরযুক্ত শিরোনাম দেখায়।
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="mb-[14px] flex items-center gap-[7px] text-[11px] font-medium text-[#f0f0f2]">
+    <h2 className="mb-[14px] flex items-center gap-[7px] text-[14px] font-medium text-[#f0f0f2] lg:text-[17px]">
       <span className="size-[5px] rounded-full bg-[#6555ff]" />
       {children}
     </h2>
@@ -91,7 +91,7 @@ export default function NewJobsPage() {
   return (
     <div className="min-h-[calc(100svh-3rem)] flex-1 bg-[#121212] px-4 pb-10 pt-5 text-white sm:px-5 lg:px-4">
       <div className="mx-auto max-w-[920px]">
-        <div className="mb-[5px] flex items-center gap-[6px] text-[9px] text-[#888891]">
+        <div className="mb-[5px] flex items-center gap-[6px] text-[11px] text-[#888891] lg:text-[13px]">
           <Link href="/dashboard/recruiter/jobs" className="hover:text-white">
             Manage Jobs
           </Link>
@@ -101,10 +101,10 @@ export default function NewJobsPage() {
         {/* পেজের শিরোনাম এবং দ্রুত Publish button। */}
         <header className="mb-[26px] flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-[21px] font-medium leading-[27px] tracking-[-.035em]">
+            <h1 className="text-[21px] font-medium leading-[27px] tracking-[-.035em] lg:text-[30px] lg:leading-[36px]">
               Post a New Job
             </h1>
-            <p className="mt-[2px] text-[10px] text-[#92929b]">
+            <p className="mt-[2px] text-[12px] text-[#92929b] lg:text-[15px]">
               Fill in the position specifications to attract qualified talent
               across our network.
             </p>
@@ -113,7 +113,7 @@ export default function NewJobsPage() {
             type="submit"
             form="new-job-form"
             disabled={isSubmitting}
-            className="inline-flex h-[30px] shrink-0 items-center gap-[6px] rounded-[9px] bg-[#5c4bff] px-[13px] text-[10px] font-medium shadow-[0_4px_14px_rgba(76,61,255,.2)] hover:bg-[#7062ff] disabled:opacity-60"
+            className="inline-flex h-[36px] shrink-0 items-center gap-[6px] rounded-[9px] bg-[#5c4bff] px-[13px] text-[12px] font-medium shadow-[0_4px_14px_rgba(76,61,255,.2)] hover:bg-[#7062ff] disabled:opacity-60 lg:h-[42px] lg:text-[14px]"
           >
             {isSubmitting ? "Publishing…" : "Publish Job"}
             <ArrowRight className="size-[13px]" />
@@ -184,7 +184,7 @@ export default function NewJobsPage() {
                       key={type}
                       type="button"
                       onClick={() => setJobType(type)}
-                      className={`h-[31px] rounded-[9px] border text-[10px] transition ${jobType === type ? "border-[#5547e8] bg-[#222126] text-white" : "border-transparent bg-[#202023] text-[#9999a2] hover:text-white"}`}
+                      className={`h-[36px] rounded-[9px] border text-[12px] transition lg:h-[42px] lg:text-[14px] ${jobType === type ? "border-[#5547e8] bg-[#222126] text-white" : "border-transparent bg-[#202023] text-[#9999a2] hover:text-white"}`}
                     >
                       {type}
                     </button>
@@ -205,10 +205,10 @@ export default function NewJobsPage() {
                   <Globe2 className="size-[13px]" />
                 </span>
                 <span>
-                  <span className="block text-[10px] font-medium">
+                  <span className="block text-[12px] font-medium lg:text-[14px]">
                     Remote Work Allowed (isRemote)
                   </span>
-                  <span className="mt-[1px] block text-[9px] text-[#85858e]">
+                  <span className="mt-[1px] block text-[11px] text-[#85858e] lg:text-[13px]">
                     Enable worldwide or distributed candidate applications
                   </span>
                 </span>
@@ -244,6 +244,7 @@ export default function NewJobsPage() {
                     id="job-deadline"
                     name="deadline"
                     type="date"
+                    required
                     className={`${fieldClass} pl-[31px] [color-scheme:dark]`}
                   />
                 </span>
@@ -259,6 +260,7 @@ export default function NewJobsPage() {
                     name="salaryMin"
                     type="number"
                     min="0"
+                    required
                     placeholder="e.g. 25"
                     className={`${fieldClass} pl-[31px]`}
                   />
@@ -273,6 +275,7 @@ export default function NewJobsPage() {
                     name="salaryMax"
                     type="number"
                     min="0"
+                    required
                     placeholder="e.g. 40"
                     className={`${fieldClass} pl-[31px]`}
                   />
@@ -284,6 +287,7 @@ export default function NewJobsPage() {
                   <select
                     id="salary-frequency"
                     name="frequency"
+                    required
                     defaultValue="per month"
                     className={`${fieldClass} appearance-none pr-8`}
                   >
@@ -309,7 +313,7 @@ export default function NewJobsPage() {
               required
               rows={3}
               placeholder="Describe the key responsibilities for this role..."
-              className="mt-1.5 block min-h-[65px] w-full resize-y rounded-[9px] border border-transparent bg-[#202023] px-[11px] py-[10px] text-[10px] leading-[16px] text-[#e5e5e7] outline-none placeholder:text-[#77777e] focus:border-[#6252ff]/70 focus:ring-2 focus:ring-[#6252ff]/15"
+              className="mt-1.5 block min-h-[80px] w-full resize-y rounded-[9px] border border-transparent bg-[#202023] px-[12px] py-[10px] text-[13px] leading-[19px] text-[#e5e5e7] outline-none placeholder:text-[#77777e] focus:border-[#6252ff]/70 focus:ring-2 focus:ring-[#6252ff]/15 lg:min-h-[100px] lg:text-[15px] lg:leading-[22px]"
             />
             <label
               className={`${labelClass} mt-[10px] block`}
@@ -324,23 +328,23 @@ export default function NewJobsPage() {
               required
               rows={3}
               placeholder="List the experience, skills, and qualifications candidates need..."
-              className="mt-1.5 block min-h-[65px] w-full resize-y rounded-[9px] border border-transparent bg-[#202023] px-[11px] py-[10px] text-[10px] leading-[16px] text-[#e5e5e7] outline-none placeholder:text-[#77777e] focus:border-[#6252ff]/70 focus:ring-2 focus:ring-[#6252ff]/15"
+              className="mt-1.5 block min-h-[80px] w-full resize-y rounded-[9px] border border-transparent bg-[#202023] px-[12px] py-[10px] text-[13px] leading-[19px] text-[#e5e5e7] outline-none placeholder:text-[#77777e] focus:border-[#6252ff]/70 focus:ring-2 focus:ring-[#6252ff]/15 lg:min-h-[100px] lg:text-[15px] lg:leading-[22px]"
             />
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.07] pt-3">
-              <p role="status" className="text-[10px] text-[#96969f]">
+              <p role="status" className="text-[12px] text-[#96969f] lg:text-[14px]">
                 {submitMessage || "Fields marked with * are required."}
               </p>
               <div className="flex gap-2">
                 <Link
                   href="/dashboard/recruiter/jobs"
-                  className="inline-flex h-[30px] items-center rounded-[8px] border border-white/10 px-3 text-[10px] text-[#c8c8ce] hover:bg-white/[0.05]"
+                  className="inline-flex h-[36px] items-center rounded-[8px] border border-white/10 px-3 text-[12px] text-[#c8c8ce] hover:bg-white/[0.05] lg:h-[42px] lg:text-[14px]"
                 >
                   Cancel
                 </Link>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex h-[30px] items-center gap-1.5 rounded-[8px] bg-[#5c4bff] px-3 text-[10px] font-medium hover:bg-[#7062ff] disabled:opacity-60"
+                  className="inline-flex h-[36px] items-center gap-1.5 rounded-[8px] bg-[#5c4bff] px-3 text-[12px] font-medium hover:bg-[#7062ff] disabled:opacity-60 lg:h-[42px] lg:text-[14px]"
                 >
                   <CirclePlus className="size-3" />
                   {isSubmitting ? "Publishing…" : "Publish Job"}

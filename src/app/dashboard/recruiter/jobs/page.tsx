@@ -89,7 +89,7 @@ export default function ManageJobsPage() {
 
   return (
     <main className="min-h-[calc(100svh-3rem)] min-w-0 flex-1 overflow-x-hidden bg-[#121212] px-[7px] pb-8 pt-[16px] text-white sm:px-[7px]">
-      <div className="mb-[5px] flex items-center gap-[7px] pl-0 text-[10px] leading-4 text-[#85858e]">
+      <div className="mb-[5px] flex items-center gap-[7px] pl-0 text-[10px] leading-4 text-[#85858e] lg:text-[13px]">
         <Link href="/dashboard/recruiter" className="hover:text-white">
           Manage Jobs
         </Link>
@@ -98,17 +98,17 @@ export default function ManageJobsPage() {
       </div>
       <div className="mb-[16px] flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-[22px] font-medium leading-[27px] tracking-[-0.04em]">
+          <h1 className="text-[22px] font-medium leading-[27px] tracking-[-0.04em] lg:text-[30px] lg:leading-[36px]">
             Manage Job Posts
           </h1>
-          <p className="mt-[2px] text-[10px] leading-4 text-[#96969f]">
+          <p className="mt-[2px] text-[10px] leading-4 text-[#96969f] lg:text-[14px] lg:leading-5">
             Review live listings, monitor applicants, and update job details
             across your organization.
           </p>
         </div>
         <Link
           href="/dashboard/recruiter/jobs/new"
-          className="inline-flex h-[28px] shrink-0 items-center gap-1 rounded-[9px] bg-[#5c4bff] px-[13px] text-[10px] font-medium shadow-[0_3px_12px_rgba(76,61,255,.18)] transition hover:bg-[#7062ff]"
+          className="inline-flex h-[28px] shrink-0 items-center gap-1 rounded-[9px] bg-[#5c4bff] px-[13px] text-[10px] font-medium shadow-[0_3px_12px_rgba(76,61,255,.18)] transition hover:bg-[#7062ff] lg:h-[38px] lg:text-[14px]"
         >
           <Plus className="size-[13px]" /> New Job Post
         </Link>
@@ -129,7 +129,7 @@ export default function ManageJobsPage() {
             <col className="w-[13%]" />
             <col className="w-[12%]" />
           </colgroup>
-          <thead className="h-[35px] bg-[#101012] text-[8px] font-medium uppercase tracking-[.04em] text-[#a4a4ae]">
+          <thead className="h-[42px] bg-[#101012] text-[8px] font-medium uppercase tracking-[.04em] text-[#a4a4ae] lg:text-[11px]">
             <tr>
               {[
                 "Job Title & Dept",
@@ -166,7 +166,7 @@ export default function ManageJobsPage() {
               return (
                 <tr
                   key={job._id}
-                  className="h-[54px] border-t border-[#242427] text-[10px]"
+                  className="h-[54px] border-t border-[#242427] text-[10px] lg:h-[66px] lg:text-[13px]"
                 >
                   <td className="px-[14px]">
                     <div className="flex items-center gap-[7px]">
@@ -176,11 +176,11 @@ export default function ManageJobsPage() {
                         <Icon className="size-[14px]" />
                       </span>
                       <div className="min-w-0">
-                        <div className="truncate font-medium leading-[14px] text-[#f2f2f4]">
+                        <div className="truncate font-medium leading-[14px] text-[#f2f2f4] lg:text-[14px] lg:leading-[18px]">
                           {job.title}
                         </div>
                         <div
-                          className={`mt-[1px] text-[8px] leading-[12px] ${job.dept}`}
+                          className={`mt-[1px] text-[8px] leading-[12px] lg:text-[11px] lg:leading-[15px] ${job.dept}`}
                         >
                           {job.department}
                         </div>
@@ -188,10 +188,10 @@ export default function ManageJobsPage() {
                     </div>
                   </td>
                   <td className="px-[14px]">
-                    <div className="truncate font-medium leading-[13px]">
+                    <div className="truncate font-medium leading-[13px] lg:text-[13px] lg:leading-[17px]">
                       {job.companyName ?? job.company ?? "—"}
                     </div>
-                    <div className="mt-[1px] flex items-center gap-[4px] truncate text-[8px] leading-[12px] text-[#a2a2ab]">
+                    <div className="mt-[1px] flex items-center gap-[4px] truncate text-[8px] leading-[12px] text-[#a2a2ab] lg:text-[11px] lg:leading-[15px]">
                       {isRemote ? (
                         <Globe2 className="size-[13px] shrink-0" />
                       ) : (
@@ -201,22 +201,22 @@ export default function ManageJobsPage() {
                     </div>
                   </td>
                   <td className="px-[14px]">
-                    <span className="whitespace-nowrap rounded-full bg-[#242426] px-[9px] py-[5px] text-[8px] text-[#d0d0d3]">
+                    <span className="whitespace-nowrap rounded-full bg-[#242426] px-[9px] py-[5px] text-[8px] text-[#d0d0d3] lg:text-[11px]">
                       {job.type}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-[14px] text-[9px]">
+                  <td className="whitespace-nowrap px-[14px] text-[9px] lg:text-[12px]">
                     {salary}
                   </td>
                   <td className="px-[14px]">
-                    <span className="inline-flex items-center gap-[4px] whitespace-nowrap text-[9px] text-[#d4d0ff]">
+                    <span className="inline-flex items-center gap-[4px] whitespace-nowrap text-[9px] text-[#d4d0ff] lg:text-[12px]">
                       <Users className="size-[14px]" />
                       {job.applicants} Candidates
                     </span>
                   </td>
                   <td className="px-[14px]">
                     <span
-                      className={`inline-flex items-center gap-[5px] rounded-full px-[8px] py-[5px] text-[8px] ${isActive ? "bg-[#10321f] text-[#5ee28d]" : "bg-[#252527] text-[#a2a2a9]"}`}
+                      className={`inline-flex items-center gap-[5px] rounded-full px-[8px] py-[5px] text-[8px] lg:text-[11px] ${isActive ? "bg-[#10321f] text-[#5ee28d]" : "bg-[#252527] text-[#a2a2a9]"}`}
                     >
                       <span
                         className={`size-[4px] rounded-full ${isActive ? "bg-[#2ce078]" : "bg-[#77777d]"}`}
@@ -225,8 +225,8 @@ export default function ManageJobsPage() {
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-[14px]">
-                    <div className="leading-[13px]">{formatJobDate(job.deadline)}</div>
-                    <div className="text-[8px] leading-[12px] text-[#66666d]">
+                    <div className="leading-[13px] lg:text-[12px] lg:leading-[17px]">{formatJobDate(job.deadline)}</div>
+                    <div className="text-[8px] leading-[12px] text-[#66666d] lg:text-[10px] lg:leading-[15px]">
                       Posted {formatPostedAgo(job.createdAt)}
                     </div>
                   </td>
@@ -234,7 +234,7 @@ export default function ManageJobsPage() {
                     <div className="flex items-center justify-end gap-[5px]">
                       <Link
                         href="/dashboard/recruiter/jobs/new"
-                        className="inline-flex h-[24px] items-center gap-[4px] rounded-[7px] bg-[#242044] px-[8px] text-[8px] text-[#d1caff] hover:bg-[#332d61]"
+                        className="inline-flex h-[24px] items-center gap-[4px] rounded-[7px] bg-[#242044] px-[8px] text-[8px] text-[#d1caff] hover:bg-[#332d61] lg:h-[32px] lg:text-[11px]"
                       >
                         <Pencil className="size-[12px]" />
                         Update
