@@ -2,15 +2,10 @@ import Image from "next/image";
 import globe from "@/images/globe.png";
 import { ArrowUpRight, MapPin, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { HeroStats } from "./hero-stats";
 
 // Hero অংশের নিচে দেখানো platform-এর marketing statistics।
-const stats = [
-  { value: "10K+", label: "Active jobs" },
-  { value: "8K+", label: "Companies" },
-  { value: "95%", label: "Success rate" },
-  { value: "24/7", label: "Career support" },
-];
-
+/** Landing-page introduction, job search form, and platform artwork. */
 export function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-[#050507] px-5 pb-20 pt-10 text-white sm:px-8 sm:pt-14">
@@ -87,17 +82,7 @@ export function Hero() {
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#050507] via-transparent via-25% to-[#050507]" />
 
-        <div className="absolute inset-x-0 bottom-2 z-10 grid grid-cols-2 gap-2 sm:bottom-4 sm:grid-cols-4 sm:gap-3">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="rounded-xl border border-white/10 bg-[#09090de8] p-3 text-left shadow-[0_12px_30px_rgba(0,0,0,0.35)] backdrop-blur-md sm:p-4"
-            >
-              <p className="text-lg font-semibold tracking-tight sm:text-2xl">{stat.value}</p>
-              <p className="mt-1 text-[10px] text-zinc-400 sm:text-xs">{stat.label}</p>
-            </div>
-          ))}
-        </div>
+        <HeroStats />
       </div>
     </section>
   );
