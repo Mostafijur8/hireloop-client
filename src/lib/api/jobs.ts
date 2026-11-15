@@ -1,7 +1,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
 
-export const Getjobs = async () => {
-  const response = await fetch(`${API_URL}/jobs`);
+export const Getjobs = async (query = '') => {
+  const response = await fetch(`${API_URL}/jobs?${query}`);
   return response.json();
 };
 
