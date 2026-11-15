@@ -9,6 +9,7 @@ import { authClient, useSession } from "@/lib/auth-client";
 import { useToast } from "@/components/toast-provider";
 import { NavbarDesktop } from "./navbar-desktop";
 import { NavbarMobile } from "./navbar-mobile";
+import { dashboardByRole, isUserRole } from "@/app/components/app-sidebar-config";
 
 /** Responsive public navigation and sign-in state actions. */
 export function Navbar() {
@@ -16,6 +17,8 @@ export function Navbar() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: session, isPending } = useSession();
+  const role = session?.user?.role;
+  const dashboardHref = isUserRole(role) ? dashboardByRole[role].url : "/dashboard/seeker";
 
   async function handleSignOut() {
     try {
@@ -36,10 +39,10 @@ export function Navbar() {
       <div className="rounded-[14px] bg-[#202020] px-4 sm:px-[18px]">
         <div className="flex min-h-[68px] items-center justify-between">
           <Link href="/" aria-label="Hireloop home" className="shrink-0 text-[27px] font-extrabold leading-none tracking-[-1.8px]"><span className="text-[#168bff]">hire</span><span className="text-[#ff7b18]">l<span className="text-[#168bff]">o</span>op</span></Link>
-          <NavbarDesktop isPending={isPending} isSignedIn={Boolean(session)} userName={session?.user?.name || undefined} onSignOut={handleSignOut} />
+          <NavbarDesktop isPending={isPending} isSignedIn={Boolean(session)} dashboardHref={dashboardHref} userName={session?.user?.name || undefined} onSignOut={handleSignOut} />
           <Button type="button" variant="ghost" size="icon" aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={menuOpen} aria-controls="mobile-navigation" className="text-white hover:bg-white/10 hover:text-white md:hidden" onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X /> : <Menu />}</Button>
         </div>
-        <NavbarMobile isOpen={menuOpen} isPending={isPending} isSignedIn={Boolean(session)} userName={session?.user?.name || undefined} onClose={() => setMenuOpen(false)} onSignOut={handleSignOut} />
+        <NavbarMobile isOpen={menuOpen} isPending={isPending} isSignedIn={Boolean(session)} dashboardHref={dashboardHref} userName={session?.user?.name || undefined} onClose={() => setMenuOpen(false)} onSignOut={handleSignOut} />
       </div>
     </nav>
   );

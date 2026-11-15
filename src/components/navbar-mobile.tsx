@@ -5,6 +5,7 @@ type NavbarMobileProps = {
   isOpen: boolean;
   isPending: boolean;
   isSignedIn: boolean;
+  dashboardHref: string;
   userName?: string;
   onClose: () => void;
   onSignOut: () => void;
@@ -15,6 +16,7 @@ export function NavbarMobile({
   isOpen,
   isPending,
   isSignedIn,
+  dashboardHref,
   userName,
   onClose,
   onSignOut,
@@ -39,6 +41,13 @@ export function NavbarMobile({
         {!isPending &&
           (isSignedIn ? (
             <>
+              <a
+                href={dashboardHref}
+                onClick={onClose}
+                className="rounded-md px-3 py-2 text-sm text-white hover:bg-white/5"
+              >
+                Dashboard
+              </a>
               <span className="px-3 py-2 text-sm text-white">
                 Welcome, {userName || "there"}
               </span>

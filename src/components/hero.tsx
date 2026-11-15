@@ -17,7 +17,10 @@ export function Hero() {
 
         <h1 className="max-w-3xl text-4xl font-semibold leading-[1.08] tracking-[-0.04em] sm:text-6xl lg:text-[72px]">
           Find your dream
-          <br className="hidden sm:block" /> job <span className="bg-gradient-to-r from-[#8b7bff] via-[#b0a5ff] to-[#6479ff] bg-clip-text text-transparent">today.</span>
+          <br className="hidden sm:block" /> job{" "}
+          <span className="bg-gradient-to-r from-[#8b7bff] via-[#b0a5ff] to-[#6479ff] bg-clip-text text-transparent">
+            today.
+          </span>
         </h1>
         <p className="mt-5 max-w-xl text-sm leading-6 text-zinc-400 sm:text-base sm:leading-7">
           Discover opportunities that match your ambition. Connect with teams
@@ -38,7 +41,10 @@ export function Hero() {
               className="h-11 min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-zinc-500"
             />
           </label>
-          <span aria-hidden="true" className="hidden h-7 w-px bg-white/10 sm:block" />
+          <span
+            aria-hidden="true"
+            className="hidden h-7 w-px bg-white/10 sm:block"
+          />
           <label className="flex min-w-0 flex-1 items-center gap-3 px-3 sm:px-0">
             <MapPin className="size-4 shrink-0 text-zinc-500" />
             <input
@@ -59,7 +65,12 @@ export function Hero() {
 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-[11px] text-zinc-500">
           <span className="mr-1">Popular:</span>
-          {["Product Designer", "Frontend Developer", "Remote", "Marketing"].map((tag) => (
+          {[
+            "Product Designer",
+            "Frontend Developer",
+            "Remote",
+            "Marketing",
+          ].map((tag) => (
             <a
               key={tag}
               href={`/jobs?q=${encodeURIComponent(tag)}`}
