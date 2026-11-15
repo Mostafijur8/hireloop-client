@@ -1,5 +1,5 @@
-import { CalendarDays, Globe2, MapPin } from "lucide-react";
-import { fieldClass, labelClass } from "./form-styles";
+import { CalendarDays, Globe2, MapPin } from 'lucide-react';
+import { fieldClass, labelClass } from './form-styles';
 
 type WorkLocationFieldsProps = {
   remote: boolean;
@@ -7,10 +7,7 @@ type WorkLocationFieldsProps = {
 };
 
 /** Collects remote preference, location, and application deadline. */
-export function WorkLocationFields({
-  remote,
-  onRemoteChange,
-}: WorkLocationFieldsProps) {
+export function WorkLocationFields({ remote, onRemoteChange }: WorkLocationFieldsProps) {
   return (
     <>
       <label className="flex min-h-[43px] cursor-pointer items-center justify-between rounded-[9px] bg-[#202023] px-[11px] py-[7px]">
@@ -45,7 +42,7 @@ export function WorkLocationFields({
               name="location"
               required={!remote}
               disabled={remote}
-              placeholder={remote ? "Remote" : "City, Country"}
+              placeholder={remote ? 'Remote' : 'City, Country'}
               className={`${fieldClass} pl-[31px] disabled:opacity-60`}
             />
           </span>

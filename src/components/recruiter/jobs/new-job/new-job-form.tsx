@@ -16,7 +16,7 @@ export default function NewJobForm() {
   const [submitMessage, setSubmitMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [jobType, setJobType] = useState<JobType>("Full-time");
-  const [remote, setRemote] = useState(true);
+  const [remote, setRemote] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
