@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MoreVertical, Pencil } from "lucide-react";
-import { JobDeleteDialog } from "@/app/components/alertDialog/jobDeleteDialog";
+import { JobDeleteDialog } from "@/components/recruiter/jobs/job-delete-dialog";
 import type { JobListing } from "./job-listing-types";
 
 /** Renders update and delete controls for a job listing. */

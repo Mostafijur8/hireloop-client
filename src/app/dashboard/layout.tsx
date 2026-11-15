@@ -1,5 +1,5 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "../components/app-sidebar";
+import { AppSidebar } from "@/components/dashboard/sidebar/app-sidebar";
 
 
 // ড্যাশবোর্ডের সব route-এ role অনুযায়ী sidebar ও collapsible layout যোগ করে।
