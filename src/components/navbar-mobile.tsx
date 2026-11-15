@@ -72,13 +72,6 @@ export function NavbarMobile({
               >
                 Sign In
               </a>
-              <a
-                href="/sign-up"
-                onClick={onClose}
-                className="rounded-md px-3 py-2 text-sm font-medium text-[#9182ff] hover:bg-white/5"
-              >
-                Sign Up
-              </a>
               <Button
                 nativeButton={false}
                 render={<a href="/sign-up" />}

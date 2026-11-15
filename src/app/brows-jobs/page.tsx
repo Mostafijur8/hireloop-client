@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Navbar } from '@/components/navbar';
 import { BriefcaseBusiness, MapPin, Search, Sparkles } from 'lucide-react';
 import Getjobs from '@/lib/api/jobs';
 import type { JobRecord } from '@/types/job';
@@ -23,7 +24,9 @@ export default async function BrowseJobs({
   const selectedTypes = Array.isArray(search.type) ? search.type : search.type ? [search.type] : [];
 
   return (
-    <main className="min-h-screen bg-[#09090b] px-4 py-8 text-white sm:px-8 sm:py-12">
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-[#09090b] px-4 py-8 text-white sm:px-8 sm:py-12">
       <div className="mx-auto max-w-6xl">
         <header className="mb-8">
           <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">
@@ -135,5 +138,6 @@ export default async function BrowseJobs({
         </div>
       </div>
     </main>
+    </>
   );
 }

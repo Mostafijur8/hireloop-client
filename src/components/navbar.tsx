@@ -35,10 +35,10 @@ export function Navbar() {
   }
 
   return (
-    <nav aria-label="Main navigation" className="mx-auto max-w-[1200px] px-4 py-5 sm:px-[42px]">
-      <div className="rounded-[14px] bg-[#202020] px-4 sm:px-[18px]">
-        <div className="flex min-h-[68px] items-center justify-between">
-          <Link href="/" aria-label="Hireloop home" className="shrink-0 text-[27px] font-extrabold leading-none tracking-[-1.8px]"><span className="text-[#168bff]">hire</span><span className="text-[#ff7b18]">l<span className="text-[#168bff]">o</span>op</span></Link>
+    <nav aria-label="Main navigation" className="w-full bg-black px-4 py-3 sm:px-8">
+      <div className="mx-auto w-full max-w-[1200px] rounded-xl border border-white/[0.07] bg-black px-3 sm:px-4">
+        <div className="flex min-h-12 items-center justify-between">
+          <Link href="/" aria-label="Hireloop home" className="shrink-0 text-[22px] font-extrabold leading-none tracking-[-1.4px]"><span className="text-[#168bff]">hire</span><span className="text-[#ff7b18]">l<span className="text-[#168bff]">o</span>op</span></Link>
           <NavbarDesktop isPending={isPending} isSignedIn={Boolean(session)} dashboardHref={dashboardHref} userName={session?.user?.name || undefined} onSignOut={handleSignOut} />
           <Button type="button" variant="ghost" size="icon" aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={menuOpen} aria-controls="mobile-navigation" className="text-white hover:bg-white/10 hover:text-white md:hidden" onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X /> : <Menu />}</Button>
         </div>

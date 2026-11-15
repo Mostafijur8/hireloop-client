@@ -18,12 +18,12 @@ export function NavbarDesktop({
   onSignOut,
 }: NavbarDesktopProps) {
   return (
-    <div className="hidden items-center gap-7 md:flex">
+    <div className="hidden items-center gap-4 rounded-lg border border-white/[0.05] bg-[#19191c] px-3 py-2 md:flex">
       {navbarLinks.map((link) => (
         <a
           key={link.label}
           href={link.href}
-          className="text-[11px] text-white transition-colors hover:text-[#9b8cff]"
+          className="text-[10px] text-zinc-300 transition-colors hover:text-[#9b8cff]"
         >
           {link.label}
         </a>
@@ -34,7 +34,7 @@ export function NavbarDesktop({
           <>
             <a
               href={dashboardHref}
-              className="text-[11px] text-white transition-colors hover:text-[#9b8cff]"
+              className="text-[10px] text-zinc-300 transition-colors hover:text-[#9b8cff]"
             >
               Dashboard
             </a>
@@ -43,7 +43,7 @@ export function NavbarDesktop({
               type="button"
               variant="ghost"
               onClick={onSignOut}
-              className="h-auto px-0 text-[12px] font-medium text-[#7864ff] hover:bg-transparent hover:text-[#a093ff]"
+              className="h-auto px-0 text-[10px] font-medium text-[#9b8cff] hover:bg-transparent hover:text-[#a093ff]"
             >
               Sign Out
             </Button>
@@ -54,22 +54,14 @@ export function NavbarDesktop({
               nativeButton={false}
               render={<a href="/sign-in" />}
               variant="ghost"
-              className="h-auto px-0 text-[12px] font-medium text-[#7864ff] hover:bg-transparent hover:text-[#a093ff]"
+              className="h-auto px-0 text-[10px] font-medium text-[#9b8cff] hover:bg-transparent hover:text-[#a093ff]"
             >
               Sign In
             </Button>
             <Button
               nativeButton={false}
               render={<a href="/sign-up" />}
-              variant="ghost"
-              className="h-auto px-0 text-[12px] font-medium text-[#7864ff] hover:bg-transparent hover:text-[#a093ff]"
-            >
-              Sign Up
-            </Button>
-            <Button
-              nativeButton={false}
-              render={<a href="/sign-up" />}
-              className="h-auto rounded-[9px] bg-[#6650f5] px-[17px] py-[10px] text-[12px] font-medium text-white shadow-[0_3px_12px_rgba(102,80,245,0.28)] hover:bg-[#7663ff]"
+              className="h-auto rounded-md bg-[#6650f5] px-3 py-2 text-[10px] font-semibold text-white shadow-[0_3px_12px_rgba(102,80,245,0.28)] hover:bg-[#7663ff]"
             >
               Get Started
             </Button>
