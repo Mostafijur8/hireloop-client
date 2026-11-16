@@ -86,7 +86,7 @@ export default async function JobDetails({
           <span aria-hidden="true" className="hidden rounded-lg border border-white/10 bg-[#1d1d20] p-2.5 text-zinc-300 sm:inline-flex">
             <Bookmark className="size-4" />
           </span>
-          <Link href="/sign-in" className="w-full rounded-lg bg-white px-5 py-2.5 text-center text-sm font-semibold text-zinc-900 transition hover:bg-violet-100 sm:w-auto">
+          <Link href={`/sign-in?callbackUrl=${encodeURIComponent(`/brows-jobs/${job._id}`)}`} className="w-full rounded-lg bg-white px-5 py-2.5 text-center text-sm font-semibold text-zinc-900 transition hover:bg-violet-100 sm:w-auto">
             Apply Now
           </Link>
         </header>

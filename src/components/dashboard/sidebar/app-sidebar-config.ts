@@ -36,7 +36,7 @@ export const dashboardByRole: Record<
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard/seeker' },
       { label: 'Jobs', icon: BriefcaseBusiness },
       { label: 'Saved Jobs', icon: Bookmark },
-      { label: 'Applications', icon: FileText },
+      { label: 'Applications', icon: FileText, href: '/dashboard/seeker/applications' },
       { label: 'Billing', icon: CreditCard },
       { label: 'Settings', icon: Settings },
     ],

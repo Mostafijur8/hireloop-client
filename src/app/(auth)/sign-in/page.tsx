@@ -21,12 +21,16 @@ export default function SignInPage() {
     setPending(true);
     setError("");
     const form = new FormData(event.currentTarget);
+    const requestedCallback = new URLSearchParams(window.location.search).get("callbackUrl");
+    const callbackURL = requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
+      ? requestedCallback
+      : "/";
     try {
       const { error: signInError } = await authClient.signIn.email({
         email: String(form.get("email") ?? "").trim(),
         password: String(form.get("password") ?? ""),
         rememberMe: true,
-        callbackURL: "/",
+        callbackURL,
       });
       if (signInError) {
         const message = signInError.message ?? "Sign in failed. Please try again.";
@@ -34,7 +38,7 @@ export default function SignInPage() {
         toast(message, "error");
       } else {
         toast("Signed in successfully.", "success");
-        router.replace("/");
+        router.replace(callbackURL);
         router.refresh();
       }
     } catch {
