@@ -1,122 +1,26 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Bell,
   BriefcaseBusiness,
   ChevronLeft,
   ChevronRight,
-  Code2,
   Download,
   Mail,
   Search,
-  Settings2,
-  Sparkles,
 } from 'lucide-react';
 
 type Application = {
+  id: string;
   title: string;
   company: string;
   type: string;
   location: string;
   applied: string;
   status: 'Applied' | 'Review' | 'Shortlisted' | 'Rejected' | 'Offered';
-  icon: typeof Code2;
   archived?: boolean;
 };
-
-const applications: Application[] = [
-  {
-    title: 'Senior Frontend Engineer',
-    company: 'Stark Industries',
-    type: 'Full-time',
-    location: 'Remote',
-    applied: '2 hours ago',
-    status: 'Applied',
-    icon: Code2,
-  },
-  {
-    title: 'Product Designer',
-    company: 'Cyberdyne Systems',
-    type: 'Contract',
-    location: 'Hybrid',
-    applied: '1 day ago',
-    status: 'Review',
-    icon: Sparkles,
-  },
-  {
-    title: 'Lead Data Scientist',
-    company: 'Wayne Enterprises',
-    type: 'Full-time',
-    location: 'On-site',
-    applied: '4 days ago',
-    status: 'Shortlisted',
-    icon: Settings2,
-  },
-  {
-    title: 'Cloud Architect',
-    company: 'Oscorp Tech',
-    type: 'Full-time',
-    location: 'Remote',
-    applied: '1 week ago',
-    status: 'Rejected',
-    icon: BriefcaseBusiness,
-  },
-  {
-    title: 'AI Research Engineer',
-    company: 'Hooli Corp',
-    type: 'Full-time',
-    location: 'Hybrid',
-    applied: '2 weeks ago',
-    status: 'Offered',
-    icon: Sparkles,
-  },
-  {
-    title: 'Backend Engineer',
-    company: 'Umbrella Labs',
-    type: 'Full-time',
-    location: 'Remote',
-    applied: '3 weeks ago',
-    status: 'Shortlisted',
-    icon: Code2,
-  },
-  {
-    title: 'UX Researcher',
-    company: 'Pied Piper',
-    type: 'Contract',
-    location: 'Hybrid',
-    applied: '1 month ago',
-    status: 'Review',
-    icon: Sparkles,
-  },
-  {
-    title: 'Platform Engineer',
-    company: 'Initech',
-    type: 'Full-time',
-    location: 'On-site',
-    applied: '1 month ago',
-    status: 'Applied',
-    icon: Settings2,
-  },
-  {
-    title: 'Product Analyst',
-    company: 'Globex',
-    type: 'Full-time',
-    location: 'Remote',
-    applied: '2 months ago',
-    status: 'Rejected',
-    icon: BriefcaseBusiness,
-  },
-  {
-    title: 'Design Systems Lead',
-    company: 'Aperture',
-    type: 'Full-time',
-    location: 'Hybrid',
-    applied: '2 months ago',
-    status: 'Offered',
-    icon: Sparkles,
-  },
-];
 
 const statusStyle: Record<Application['status'], string> = {
   Applied: 'bg-zinc-700/40 text-zinc-300',
@@ -127,10 +31,41 @@ const statusStyle: Record<Application['status'], string> = {
 };
 
 export default function ApplicationsPage() {
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState<'Active' | 'Archived'>('Active');
   const [page, setPage] = useState(1);
   const [detail, setDetail] = useState<Application | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadApplications() {
+      try {
+        const response = await fetch('/api/applications');
+        const data = (await response.json()) as {
+          applications?: Application[];
+          error?: string;
+        };
+
+        if (!response.ok) throw new Error(data.error ?? 'Could not load applications.');
+        if (!cancelled) setApplications(data.applications ?? []);
+      } catch (error) {
+        if (!cancelled) {
+          setLoadError(error instanceof Error ? error.message : 'Could not load applications.');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void loadApplications();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const filtered = useMemo(
     () =>
       applications.filter(
@@ -138,9 +73,16 @@ export default function ApplicationsPage() {
           `${app.title} ${app.company}`.toLowerCase().includes(query.toLowerCase()) &&
           (tab === 'Archived' ? app.archived : !app.archived),
       ),
-    [query, tab],
+    [applications, query, tab],
   );
   const visible = filtered.slice((page - 1) * 5, page * 5);
+  const pageCount = Math.ceil(filtered.length / 5);
+  const summary = [
+    ['Total Applied', applications.length, 'text-zinc-100'],
+    ['Shortlisted', applications.filter((app) => app.status === 'Shortlisted').length, 'text-zinc-100'],
+    ['In Review', applications.filter((app) => app.status === 'Review').length, 'text-amber-400'],
+    ['Offers', applications.filter((app) => app.status === 'Offered').length, 'text-emerald-400'],
+  ] as const;
 
   return (
     <main className="min-h-[calc(100svh-3rem)] bg-[#0b0b0e] px-5 py-6 text-zinc-100 sm:px-7 lg:px-8">
@@ -211,12 +153,7 @@ export default function ApplicationsPage() {
           aria-label="Application summary"
           className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4"
         >
-          {[
-            ['Total Applied', '24', 'text-zinc-100'],
-            ['Shortlisted', '8', 'text-zinc-100'],
-            ['Interviews', '3', 'text-amber-400'],
-            ['Success Rate', '12%', 'text-emerald-400'],
-          ].map(([label, value, color]) => (
+          {summary.map(([label, value, color]) => (
             <div
               key={label}
               className="rounded-lg border border-white/[0.07] bg-[#141417] px-4 py-3"
@@ -234,12 +171,16 @@ export default function ApplicationsPage() {
             <span>Status</span>
             <span className="text-right">Action</span>
           </div>
-          {visible.length ? (
+          {loading ? (
+            <div className="px-4 py-12 text-center text-xs text-zinc-500">Loading your applications...</div>
+          ) : loadError ? (
+            <div role="alert" className="px-4 py-12 text-center text-xs text-red-400">{loadError}</div>
+          ) : visible.length ? (
             visible.map((app) => {
-              const Icon = app.icon;
+              const Icon = BriefcaseBusiness;
               return (
                 <div
-                  key={app.title}
+                  key={app.id}
                   className="grid grid-cols-[minmax(180px,1.6fr)_minmax(125px,1fr)_minmax(90px,.8fr)_minmax(100px,.8fr)_60px] items-center gap-3 border-b border-white/[0.06] px-4 py-2.5 text-[10px] last:border-b-0 max-sm:grid-cols-2 max-sm:gap-y-3"
                 >
                   <div className="flex min-w-0 items-center gap-2">
@@ -288,7 +229,7 @@ export default function ApplicationsPage() {
             <span>
               Showing {filtered.length ? (page - 1) * 5 + 1 : 0}-
               {Math.min(page * 5, filtered.length)} of{' '}
-              {tab === 'Archived' ? filtered.length : query ? filtered.length : 24} applications
+              {filtered.length} applications
             </span>
             <nav className="flex items-center gap-1" aria-label="Pagination">
               <button
@@ -298,7 +239,7 @@ export default function ApplicationsPage() {
               >
                 <ChevronLeft className="size-3.5" />
               </button>
-              {[1, 2, 3].map((num) => (
+              {Array.from({ length: pageCount }, (_, index) => index + 1).map((num) => (
                 <button
                   key={num}
                   onClick={() => setPage(num)}
@@ -308,7 +249,7 @@ export default function ApplicationsPage() {
                 </button>
               ))}
               <button
-                disabled={page >= Math.ceil(filtered.length / 5)}
+                disabled={pageCount === 0 || page >= pageCount}
                 onClick={() => setPage(page + 1)}
                 className="rounded-md border border-white/[0.07] p-1.5 hover:bg-white/5 disabled:opacity-40"
               >

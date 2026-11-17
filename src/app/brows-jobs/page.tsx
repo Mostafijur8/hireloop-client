@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { Navbar } from '@/components/navbar';
-import { BriefcaseBusiness, MapPin, Search, Sparkles } from 'lucide-react';
+import { Search, Sparkles } from 'lucide-react';
 import Getjobs from '@/lib/api/jobs';
 import type { JobRecord } from '@/types/job';
+import { BrowseJobList } from '@/components/browse-job-list';
 
 const jobTypes = ['Full-time', 'Part-time', 'Contract', 'Internship'];
 
@@ -96,44 +97,7 @@ export default async function BrowseJobs({
               </form>
             </div>
 
-            <div className="space-y-3">
-              {jobs.length ? jobs.map((job) => {
-                const company = job.companyName || job.company;
-                const salary = job.salary || (job.salaryRange
-                  ? `${job.salaryRange.currency || 'BDT'} ${job.salaryRange.min || ''}${job.salaryRange.max ? ` - ${job.salaryRange.max}` : ''}`
-                  : '');
-
-                return (
-                  <Link key={job._id} href={`/brows-jobs/${job._id}`} className="group block rounded-2xl border border-white/[0.07] bg-[#111113] p-5 transition hover:border-violet-400/40 hover:bg-[#151518] sm:p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-white/[0.06] bg-[#1d1d21] text-lg font-semibold text-violet-300">
-                        {company?.charAt(0) || job.title.charAt(0)}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <h3 className="font-semibold text-zinc-100 transition group-hover:text-violet-200">{job.title}</h3>
-                          <span className="text-xs text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-violet-300">View details &rarr;</span>
-                        </div>
-                        <p className="mt-1 text-sm text-zinc-400">{company || 'Company details coming soon'}</p>
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {job.location && <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/[0.04] px-2.5 py-1.5 text-xs text-zinc-400"><MapPin className="size-3.5" />{job.location}</span>}
-                          {job.type && <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/[0.04] px-2.5 py-1.5 text-xs text-zinc-400"><BriefcaseBusiness className="size-3.5" />{job.type}</span>}
-                          {salary && <span className="rounded-lg bg-violet-400/10 px-2.5 py-1.5 text-xs font-medium text-violet-200">{salary}</span>}
-                          {job.remote && <span className="rounded-lg bg-emerald-400/10 px-2.5 py-1.5 text-xs text-emerald-300">Remote</span>}
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              }) : (
-                <div className="rounded-2xl border border-dashed border-white/10 bg-[#111113] px-6 py-12 text-center">
-                  <Search className="mx-auto size-6 text-zinc-600" />
-                  <p className="mt-3 font-medium text-zinc-300">No jobs found</p>
-                  <p className="mt-1 text-sm text-zinc-500">Try a different search or clear your filters.</p>
-                  <Link href="/brows-jobs" className="mt-4 inline-block text-sm text-violet-300 hover:text-violet-200">Clear search</Link>
-                </div>
-              )}
-            </div>
+            <BrowseJobList jobs={jobs} />
           </section>
         </div>
       </div>
