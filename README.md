@@ -20,6 +20,10 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Stripe payments
+
+Set `STRIPE_SECRET_KEY` in the server environment. Checkout charges a one-time $20 USD for the Hireloop Apply Plan. Configure a Stripe webhook pointing to `/api/stripe/webhook` and set its signing secret as `STRIPE_WEBHOOK_SECRET`. Subscribe to `checkout.session.completed` and `checkout.session.async_payment_succeeded`; only paid Checkout sessions unlock applications after the five free applications. For local development, forward those events to `http://localhost:3000/api/stripe/webhook` with the Stripe CLI and use its printed signing secret.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

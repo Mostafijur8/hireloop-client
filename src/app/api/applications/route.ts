@@ -105,7 +105,8 @@ export async function POST(request: Request) {
     const applicationCount = await collection.countDocuments({
       $or: [{ seekerId: session.user.id }, { userId: session.user.id }],
     });
-    if (applicationCount >= 5) {
+    const hasPaidAccess = await database.collection('payments').findOne({ userId: session.user.id });
+    if (applicationCount >= 5 && !hasPaidAccess) {
       return NextResponse.json(
         {
           error: 'You have used all 5 free applications.',

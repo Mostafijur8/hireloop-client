@@ -1,29 +1,38 @@
-import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import { NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
 import { stripe } from '@/lib/stripe';
 
-export async function POST() {
-  try {
-    const headersList = await headers();
-    const origin = headersList.get('origin');
+export async function POST(request: Request) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) {
+    return NextResponse.redirect(new URL('/sign-in?callbackUrl=%2Fpayment', request.url), 303);
+  }
 
-    // Create Checkout Sessions from body params.
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          // Provide the exact Price ID (for example, price_1234) of the product you want to sell
-          price: '{{PRICE_ID}}',
-          quantity: 1,
-        },
-      ],
+  try {
+    const checkout = await stripe.checkout.sessions.create({
       mode: 'payment',
-      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-      // Provide a name (for example, hosted_web_0001) to label this Checkout integration and measure its conversion independently
-      integration_identifier: '{{INTEGRATION_ID}}',
+      line_items: [{
+        quantity: 1,
+        price_data: {
+          currency: 'usd',
+          unit_amount: 2000,
+          product_data: {
+            name: 'Hireloop Apply Plan',
+            description: 'Unlock continued job applications after your 5 free applications.',
+          },
+        },
+      }],
+      client_reference_id: session.user.id,
+      metadata: { userId: session.user.id },
+      success_url: new URL('/checkout/success?session_id={CHECKOUT_SESSION_ID}', request.url).toString(),
+      cancel_url: new URL('/payment?canceled=1', request.url).toString(),
     });
-    return NextResponse.redirect(session.url as string, 303);
-  } catch (err) {
-    const error = err as { message: string; statusCode?: number };
-    return NextResponse.json({ error: error.message }, { status: error.statusCode || 500 });
+
+    if (!checkout.url) throw new Error('Stripe did not return a Checkout URL.');
+    return NextResponse.redirect(checkout.url, 303);
+  } catch (error) {
+    console.error('Could not create Stripe Checkout session:', error);
+    return NextResponse.json({ error: 'Could not start checkout. Please try again.' }, { status: 500 });
   }
 }
