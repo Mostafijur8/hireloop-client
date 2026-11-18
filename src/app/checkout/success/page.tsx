@@ -39,11 +39,13 @@ export default async function CheckoutSuccessPage({
 
   if (paid) {
     // পেমেন্টের রেকর্ড একবারই সংরক্ষণ হয়; একই সেশন আবার এলে duplicate তৈরি হয় না।
+    // ??? checkout-?? customer ???? user-?? payment record-? ?????? ????.
     await database.collection('payments').updateOne(
       { checkoutSessionId: checkout.id },
       {
         $setOnInsert: {
           email: customerEmail,
+          customerName: checkout.customer_details?.name ?? userSession.user.name ?? '',
           userId: userSession.user.id,
           checkoutSessionId: checkout.id,
           paidAt: new Date(),

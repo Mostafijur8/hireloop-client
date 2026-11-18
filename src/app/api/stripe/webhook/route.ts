@@ -22,9 +22,20 @@ export async function POST(request: Request) {
     const checkout = event.data.object as Stripe.Checkout.Session;
     const userId = checkout.metadata?.userId;
     if (checkout.mode === 'payment' && checkout.payment_status === 'paid' && userId) {
+      // Stripe-?? ??????? payment event ???? customer name-?? record ????.
       await database.collection('payments').updateOne(
         { checkoutSessionId: checkout.id },
-        { $setOnInsert: { checkoutSessionId: checkout.id, userId, paidAt: new Date(), amountTotal: checkout.amount_total, currency: checkout.currency } },
+        {
+          $setOnInsert: {
+            checkoutSessionId: checkout.id,
+            userId,
+            ...(checkout.customer_details?.email ? { email: checkout.customer_details.email } : {}),
+            customerName: checkout.customer_details?.name ?? '',
+            paidAt: new Date(),
+            amountTotal: checkout.amount_total,
+            currency: checkout.currency,
+          },
+        },
         { upsert: true },
       );
     }
