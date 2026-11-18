@@ -20,8 +20,38 @@ export default async function BrowseJobs({
     else if (value) query.set(key, value);
   });
 
-  const data = await Getjobs(query.toString());
-  const jobs = (Array.isArray(data) ? data : (data?.jobs ?? [])) as JobRecord[];
+  // Search locally so title, company, and skill text work even if the jobs API
+  // does not implement the `q` query parameter.
+  const searchText = typeof search.q === 'string' ? search.q.trim().toLowerCase() : '';
+  const apiQuery = new URLSearchParams(query);
+  apiQuery.delete('q');
+  const data = await Getjobs(apiQuery.toString());
+  const allJobs = (Array.isArray(data) ? data : (data?.jobs ?? [])) as JobRecord[];
+  const jobs = searchText
+    ? allJobs.filter((job) => {
+        const searchableJob = job as JobRecord & {
+          description?: string;
+          skills?: string | string[];
+          requirements?: string | string[];
+          qualifications?: string | string[];
+        };
+        const searchableText = [
+          searchableJob.title,
+          searchableJob.companyName,
+          searchableJob.company,
+          searchableJob.description,
+          searchableJob.skills,
+          searchableJob.requirements,
+          searchableJob.qualifications,
+        ]
+          .flatMap((value) => (Array.isArray(value) ? value : [value]))
+          .filter((value): value is string => typeof value === 'string')
+          .join(' ')
+          .toLowerCase();
+
+        return searchableText.includes(searchText);
+      })
+    : allJobs;
   const selectedTypes = Array.isArray(search.type) ? search.type : search.type ? [search.type] : [];
 
   return (

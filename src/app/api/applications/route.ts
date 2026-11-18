@@ -106,10 +106,10 @@ export async function POST(request: Request) {
       $or: [{ seekerId: session.user.id }, { userId: session.user.id }],
     });
     const hasPaidAccess = await database.collection('payments').findOne({ userId: session.user.id });
-    if (applicationCount >= 5 && !hasPaidAccess) {
+    if (applicationCount >= 2 && !hasPaidAccess) {
       return NextResponse.json(
         {
-          error: 'You have used all 5 free applications.',
+          error: 'You have used your 2 free applications.',
           paymentRequired: true,
           redirectTo: '/payment',
         },

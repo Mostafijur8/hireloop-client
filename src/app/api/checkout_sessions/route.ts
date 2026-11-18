@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
+import { database } from '@/lib/mongodb';
 import { stripe } from '@/lib/stripe';
 
 export async function POST(request: Request) {
@@ -10,6 +11,11 @@ export async function POST(request: Request) {
   }
 
   try {
+    const existingPayment = await database.collection('payments').findOne({ userId: session.user.id });
+    if (existingPayment) {
+      return NextResponse.redirect(new URL('/brows-jobs', request.url), 303);
+    }
+
     const checkout = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{
@@ -19,7 +25,7 @@ export async function POST(request: Request) {
           unit_amount: 2000,
           product_data: {
             name: 'Hireloop Apply Plan',
-            description: 'Unlock continued job applications after your 5 free applications.',
+            description: 'Unlock continued job applications after your 2 free applications.',
           },
         },
       }],
