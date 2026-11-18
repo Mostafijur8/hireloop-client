@@ -1,65 +1,82 @@
-"use client";
+'use client';
 
-import { useState, type FormEvent } from "react";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { useToast } from "@/components/toast-provider";
-import { createjob } from "@/lib/action/jobs";
-import type { Job, JobType } from "@/types/job";
-import { BasicInformationSection } from "./basic-information-section";
-import { LocationCompensationSection } from "./location-compensation-section";
-import { ResponsibilitiesSection } from "./responsibilities-section";
+import { useState, type FormEvent } from 'react';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import { useToast } from '@/components/toast-provider';
+import { useSession } from '@/lib/auth-client';
+import { createjob } from '@/lib/action/jobs';
+import type { Job, JobType } from '@/types/job';
+import { BasicInformationSection } from './basic-information-section';
+import { LocationCompensationSection } from './location-compensation-section';
+import { ResponsibilitiesSection } from './responsibilities-section';
 
 /** Owns job submission state and composes the feature's form sections. */
 export default function NewJobForm() {
   const { toast } = useToast();
-  const [submitMessage, setSubmitMessage] = useState("");
+  const { data: session } = useSession();
+  const [submitMessage, setSubmitMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [jobType, setJobType] = useState<JobType>("Full-time");
+  const [jobType, setJobType] = useState<JobType>('Full-time');
   const [remote, setRemote] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const recruiterId = session?.user?.id;
+    if (!recruiterId) {
+      const message = 'Please sign in before publishing a job.';
+      setSubmitMessage(message);
+      toast(message, 'error');
+      return;
+    }
+
     const form = event.currentTarget;
-    setSubmitMessage("");
+    setSubmitMessage('');
     setIsSubmitting(true);
     const formData = new FormData(form);
-    const responsibilities = String(
-      formData.get("responsibilities") ?? "",
-    ).trim();
-    const qualifications = String(formData.get("qualifications") ?? "").trim();
+    const responsibilities = String(formData.get('responsibilities') ?? '').trim();
+    const qualifications = String(formData.get('qualifications') ?? '').trim();
+
+    // Form-এর ইনপুটগুলো Job টাইপের অবজেক্টে সাজানো হচ্ছে।
     const job: Job = {
-      title: String(formData.get("title") ?? "").trim(),
-      companyName: String(formData.get("company") ?? "").trim(),
-      location: remote
-        ? "Remote"
-        : String(formData.get("location") ?? "").trim(),
+      // পদের নাম এবং কোম্পানির নাম ফর্ম থেকে নেওয়া হচ্ছে।
+      title: String(formData.get('title') ?? '').trim(),
+      companyName: String(formData.get('company') ?? '').trim(),
+      // Remote চালু থাকলে লোকেশন Remote; নইলে ফর্মের লোকেশন।
+      location: remote ? 'Remote' : String(formData.get('location') ?? '').trim(),
+      // Recruiter যে চাকরির ধরন নির্বাচন করেছেন।
       type: jobType,
-      deadline: String(formData.get("deadline") ?? "") || undefined,
+      // Deadline না দিলে undefined রাখা হচ্ছে।
+      deadline: String(formData.get('deadline') ?? '') || undefined,
+      // বেতনের সীমা এবং মুদ্রা/সময়কাল নির্ধারণ করা হচ্ছে।
       salaryRange: {
-        min: String(formData.get("salaryMin") ?? "").trim(),
-        max: String(formData.get("salaryMax") ?? "").trim(),
-        currency: "BDT",
-        period: "monthly",
+        min: String(formData.get('salaryMin') ?? '').trim(),
+        max: String(formData.get('salaryMax') ?? '').trim(),
+        currency: 'BDT',
+        period: 'monthly',
       },
+      // Signed-in recruiter's Better Auth user ID.
+      recruiterId,
+
+      
+      // দায়িত্ব ও যোগ্যতার লেখা একসঙ্গে job description হিসেবে রাখা হচ্ছে।
       description: [
         responsibilities,
         qualifications && `Qualifications & Requirements\n${qualifications}`,
       ]
         .filter(Boolean)
-        .join("\n\n"),
+        .join('\n\n'),
     };
 
     try {
       await createjob(job);
-      setSubmitMessage("Job published successfully.");
-      toast("Job published successfully.", "success");
+      setSubmitMessage('Job published successfully.');
+      toast('Job published successfully.', 'success');
       form.reset();
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Could not publish the job.";
+      const message = error instanceof Error ? error.message : 'Could not publish the job.';
       setSubmitMessage(message);
-      toast(message, "error");
+      toast(message, 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -81,8 +98,7 @@ export default function NewJobForm() {
               Post a New Job
             </h1>
             <p className="mt-[2px] text-[12px] text-[#92929b] lg:text-[15px]">
-              Fill in the position specifications to attract qualified talent
-              across our network.
+              Fill in the position specifications to attract qualified talent across our network.
             </p>
           </div>
           <button
@@ -91,27 +107,14 @@ export default function NewJobForm() {
             disabled={isSubmitting}
             className="inline-flex h-[36px] shrink-0 items-center gap-[6px] rounded-[9px] bg-[#5c4bff] px-[13px] text-[12px] font-medium shadow-[0_4px_14px_rgba(76,61,255,.2)] hover:bg-[#7062ff] disabled:opacity-60 lg:h-[42px] lg:text-[14px]"
           >
-            {isSubmitting ? "Publishing…" : "Publish Job"}
+            {isSubmitting ? 'Publishing…' : 'Publish Job'}
             <ArrowRight className="size-[13px]" />
           </button>
         </header>
-        <form
-          id="new-job-form"
-          onSubmit={handleSubmit}
-          className="space-y-[14px]"
-        >
-          <BasicInformationSection
-            jobType={jobType}
-            onJobTypeChange={setJobType}
-          />
-          <LocationCompensationSection
-            remote={remote}
-            onRemoteChange={setRemote}
-          />
-          <ResponsibilitiesSection
-            submitMessage={submitMessage}
-            isSubmitting={isSubmitting}
-          />
+        <form id="new-job-form" onSubmit={handleSubmit} className="space-y-[14px]">
+          <BasicInformationSection jobType={jobType} onJobTypeChange={setJobType} />
+          <LocationCompensationSection remote={remote} onRemoteChange={setRemote} />
+          <ResponsibilitiesSection submitMessage={submitMessage} isSubmitting={isSubmitting} />
         </form>
       </div>
     </main>

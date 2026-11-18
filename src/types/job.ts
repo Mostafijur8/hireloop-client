@@ -5,6 +5,7 @@ export type Job = {
   company?: string;
   location: string;
   type: string;
+  recruiterId: string;
   deadline?: string;
   salaryRange: {
     min: string;
@@ -23,6 +24,7 @@ export type JobType = (typeof JOB_TYPES)[number];
 export type JobRecord = {
   _id: string;
   title: string;
+  recruiterId?: string;
   companyName?: string;
   company?: string;
   department?: string;

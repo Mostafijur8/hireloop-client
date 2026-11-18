@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/components/toast-provider';
+import { useSession } from '@/lib/auth-client';
 import getJobs from '@/lib/api/jobs';
 import type { JobListing } from './job-listing-types';
 import { JobListingsTable } from './job-listings-table';
@@ -12,12 +13,24 @@ import { JobListingsTable } from './job-listings-table';
 export default function ManageJobsPage() {
   const [jobRows, setJobRows] = useState<JobListing[]>([]);
   const { toast } = useToast();
+  const { data: session, isPending } = useSession();
 
   useEffect(() => {
-    getJobs()
-      .then((data) => setJobRows(Array.isArray(data) ? data : (data?.jobs ?? [])))
+    const recruiterId = session?.user?.id;
+    if (isPending) return;
+    if (!recruiterId) {
+      setJobRows([]);
+      return;
+    }
+
+    getJobs(`recruiterId=${encodeURIComponent(recruiterId)}`)
+      .then((data) => {
+        const jobs: JobListing[] = Array.isArray(data) ? data : (data?.jobs ?? []);
+        // Request filter-এর পাশাপাশি UI-তেও নিশ্চিত করা হয় যে শুধু নিজের job দেখায়।
+        setJobRows(jobs.filter((job) => job.recruiterId === recruiterId));
+      })
       .catch((error) => console.error('Failed to load jobs', error));
-  }, []);
+  }, [isPending, session?.user?.id]);
 
   function removeJob(id: string) {
     setJobRows((current) => current.filter((job) => job._id !== id));
