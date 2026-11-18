@@ -49,11 +49,12 @@ export default async function CheckoutSuccessPage({
           paidAt: new Date(),
           amountTotal: checkout.amount_total,
           currency: checkout.currency,
+          transactionId: checkout.payment_intent,
         },
       },
       { upsert: true },
     );
-    console.log(`Payment recorded for user: ${customerEmail}, amount: ${checkout.amount_total} ,Id: ${checkout.id}`);
+    console.log(`Payment recorded for user: ${customerEmail},transactionId: ${checkout.payment_intent}, amount: ${checkout.amount_total} ,Id: ${checkout.id}`);
   }
 
   // পেমেন্টের অবস্থা অনুযায়ী বার্তা দেখায় এবং job browse করার লিংক দেয়।
