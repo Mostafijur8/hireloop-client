@@ -42,16 +42,24 @@ export function CompensationCell({ job }: { job: JobListing }) {
 }
 
 /** Displays candidate count, status, and deadline metadata. */
-export function JobActivityCells({ job }: { job: JobListing }) {
+export function JobActivityCells({ job, onViewCandidates, candidatesExpanded }: { job: JobListing; onViewCandidates: () => void; candidatesExpanded: boolean }) {
   const active = job.status?.toLowerCase() === 'active';
   return (
     <>
       <td className="px-[14px]">
         <span className="inline-flex items-center gap-[4px] whitespace-nowrap text-[9px] text-[#d4d0ff] lg:text-[12px]">
           <Users className="size-[14px]" />
-          {job.applicants}
+          {job.applicants ?? 0}
           Candidates
         </span>
+        <button
+          type="button"
+          onClick={onViewCandidates}
+          aria-expanded={candidatesExpanded}
+          className="mt-1 block text-[8px] text-[#aaa0ff] hover:text-white lg:text-[10px]"
+        >
+          {candidatesExpanded ? 'Hide candidates' : 'View candidates'}
+        </button>
       </td>
       <td className="px-[14px]">
         <span

@@ -40,6 +40,17 @@ export type JobRecord = {
     period?: string;
   };
   applicants?: number;
+  applicantList?: Array<{
+    _id: string;
+    status?: string;
+    appliedAt?: string;
+    seeker?: {
+      id?: string;
+      name?: string;
+      email?: string;
+      image?: string;
+    };
+  }>;
   deadline?: string;
   createdAt?: string;
   posted?: string;
