@@ -1,4 +1,5 @@
 import { Globe2, MapPin, Users } from 'lucide-react';
+import Link from 'next/link';
 import type { JobListing } from './job-listing-types';
 import { formatJobDate, formatPostedAgo } from './job-listing-formatters';
 
@@ -42,7 +43,7 @@ export function CompensationCell({ job }: { job: JobListing }) {
 }
 
 /** Displays candidate count, status, and deadline metadata. */
-export function JobActivityCells({ job, onViewCandidates, candidatesExpanded }: { job: JobListing; onViewCandidates: () => void; candidatesExpanded: boolean }) {
+export function JobActivityCells({ job }: { job: JobListing }) {
   const active = job.status?.toLowerCase() === 'active';
   return (
     <>
@@ -52,14 +53,9 @@ export function JobActivityCells({ job, onViewCandidates, candidatesExpanded }: 
           {job.applicants ?? 0}
           Candidates
         </span>
-        <button
-          type="button"
-          onClick={onViewCandidates}
-          aria-expanded={candidatesExpanded}
-          className="mt-1 block text-[8px] text-[#aaa0ff] hover:text-white lg:text-[10px]"
-        >
-          {candidatesExpanded ? 'Hide candidates' : 'View candidates'}
-        </button>
+        <Link href={`/dashboard/recruiter/jobs/${job._id}/applicants`} className="mt-1 block text-[8px] text-[#aaa0ff] hover:text-white lg:text-[10px]">
+          View candidates
+        </Link>
       </td>
       <td className="px-[14px]">
         <span
