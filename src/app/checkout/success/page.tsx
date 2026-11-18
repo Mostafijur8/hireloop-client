@@ -34,15 +34,18 @@ export default async function CheckoutSuccessPage({
 
   // Stripe payment সম্পন্ন বলেছে কি না, তা পরীক্ষা করা হয়।
   const paid = checkout.payment_status === 'paid';
+  // Checkout email না থাকলে logged-in account-এর email ব্যবহার করি।
+  const customerEmail = checkout.customer_details?.email ?? userSession.user.email;
+
   if (paid) {
     // পেমেন্টের রেকর্ড একবারই সংরক্ষণ হয়; একই সেশন আবার এলে duplicate তৈরি হয় না।
     await database.collection('payments').updateOne(
       { checkoutSessionId: checkout.id },
       {
         $setOnInsert: {
-          email: checkout.customer_email,
-          checkoutSessionId: checkout.id,
+          email: customerEmail,
           userId: userSession.user.id,
+          checkoutSessionId: checkout.id,
           paidAt: new Date(),
           amountTotal: checkout.amount_total,
           currency: checkout.currency,
@@ -50,6 +53,7 @@ export default async function CheckoutSuccessPage({
       },
       { upsert: true },
     );
+    console.log(`Payment recorded for user: ${customerEmail}, amount: ${checkout.amount_total} ,Id: ${checkout.id}`);
   }
 
   // পেমেন্টের অবস্থা অনুযায়ী বার্তা দেখায় এবং job browse করার লিংক দেয়।
