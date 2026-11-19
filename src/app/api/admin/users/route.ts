@@ -118,3 +118,40 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
+
+export async function DELETE(request: Request) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Please sign in to manage users.' }, { status: 401 });
+  }
+  if ((session.user as typeof session.user & { role?: string }).role !== 'admin') {
+    return NextResponse.json({ error: 'Admin access is required.' }, { status: 403 });
+  }
+
+  try {
+    const body = await request.json() as { userId?: string };
+    const userId = body.userId?.trim();
+    if (!userId) return NextResponse.json({ error: 'Please provide a user to remove.' }, { status: 400 });
+    if (userId === session.user.id) return NextResponse.json({ error: 'You cannot remove your own account.' }, { status: 400 });
+
+    const ids: Array<ObjectId | string> = ObjectId.isValid(userId)
+      ? [new ObjectId(userId), userId]
+      : [userId];
+    const users = database.collection<UserDocument>('user');
+    const target = await users.findOne({ _id: { $in: ids } });
+    if (!target) return NextResponse.json({ error: 'User not found.' }, { status: 404 });
+    if (target.role === 'admin') {
+      return NextResponse.json({ error: 'Demote this admin before removing the account.' }, { status: 400 });
+    }
+
+    await Promise.all([
+      database.collection('session').deleteMany({ userId: { $in: ids } }),
+      database.collection('account').deleteMany({ userId: { $in: ids } }),
+    ]);
+    const result = await users.deleteOne({ _id: target._id });
+    if (!result.deletedCount) return NextResponse.json({ error: 'User could not be removed.' }, { status: 500 });
+    return NextResponse.json({ success: true, userId });
+  } catch {
+    return NextResponse.json({ error: 'Could not remove this user.' }, { status: 500 });
+  }
+}

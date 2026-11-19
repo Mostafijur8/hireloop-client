@@ -27,6 +27,8 @@ export const deleteJob = async (jobId: string) => {
     credentials: 'include',
   });
 
+
+  
   if (!response.ok) {
     const result = await response.json().catch(() => null);
     const message = result?.error ?? result?.message ?? 'Could not delete the job.';

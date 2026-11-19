@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { BriefcaseBusiness, CheckCircle2, Clock3, FileText, Search } from 'lucide-react';
+import { useToast } from '@/components/toast-provider';
 
 type ApplicationStatus = 'Applied' | 'Review' | 'Shortlisted' | 'Rejected' | 'Offered';
 type Application = {
@@ -34,6 +35,7 @@ function formatDate(value: string | null) {
 }
 
 export default function AdminApplicationsPage() {
+  const { toast } = useToast();
   const [applications, setApplications] = useState<Application[]>([]);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -51,8 +53,11 @@ export default function AdminApplicationsPage() {
         if (active) setApplications(data.applications ?? []);
       })
       .catch((reason: unknown) => {
-        if (active)
-          setError(reason instanceof Error ? reason.message : 'Could not load applications.');
+        if (active) {
+          const message = reason instanceof Error ? reason.message : 'Could not load applications.';
+          setError(message);
+          toast(message, 'error');
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -60,7 +65,7 @@ export default function AdminApplicationsPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [toast]);
 
   const filtered = useMemo(
     () =>
@@ -89,10 +94,11 @@ export default function AdminApplicationsPage() {
       setApplications((current) =>
         current.map((item) => (item.id === application.id ? { ...item, status } : item)),
       );
+      toast(`${application.applicantName}'s application moved to ${status}.`, 'success');
     } catch (reason) {
-      setActionError(
-        reason instanceof Error ? reason.message : 'Could not update application status.',
-      );
+      const message = reason instanceof Error ? reason.message : 'Could not update application status.';
+      setActionError(message);
+      toast(message, 'error');
     } finally {
       setSavingId('');
     }

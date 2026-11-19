@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BriefcaseBusiness, Download, Search, ShieldCheck, UserRound, Users } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
+import { useToast } from '@/components/toast-provider';
 
 type User = {
   id: string;
@@ -37,6 +38,7 @@ function escapeCsv(value: string) {
 
 export default function AdminUsersPage() {
   const { data: session } = useSession();
+  const { toast } = useToast();
   const [users, setUsers] = useState<User[]>([]);
   const [query, setQuery] = useState('');
   const [role, setRole] = useState('all');
@@ -44,6 +46,7 @@ export default function AdminUsersPage() {
   const [error, setError] = useState('');
   const [actionError, setActionError] = useState('');
   const [workingUser, setWorkingUser] = useState('');
+  const [pendingRemoval, setPendingRemoval] = useState<User | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -54,7 +57,11 @@ export default function AdminUsersPage() {
         if (active) setUsers(data.users ?? []);
       })
       .catch((reason: unknown) => {
-        if (active) setError(reason instanceof Error ? reason.message : 'Could not load users.');
+        if (active) {
+          const message = reason instanceof Error ? reason.message : 'Could not load users.';
+          setError(message);
+          toast(message, 'error');
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -62,7 +69,7 @@ export default function AdminUsersPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [toast]);
 
   const filteredUsers = useMemo(
     () =>
@@ -128,35 +135,51 @@ export default function AdminUsersPage() {
     link.download = 'hireloop-users.csv';
     link.click();
     URL.revokeObjectURL(url);
+    toast(`Exported ${filteredUsers.length} users.`, 'success');
   }
 
   async function runAction(
     user: User,
-    action: 'make-admin' | 'make-recruiter' | 'make-seeker' | 'suspend' | 'activate',
+    action: 'make-admin' | 'make-recruiter' | 'make-seeker' | 'suspend' | 'activate' | 'remove',
   ) {
     setActionError('');
     setWorkingUser(user.id);
     try {
+      const removing = action === 'remove';
       const response = await fetch('/api/admin/users', {
-        method: 'PATCH',
+        method: removing ? 'DELETE' : 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, action }),
+        body: JSON.stringify(removing ? { userId: user.id } : { userId: user.id, action }),
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error ?? 'Could not update this user.');
-      setUsers((current) =>
-        current.map((item) =>
-          item.id !== user.id
-            ? item
-            : {
-                ...item,
-                role: result.role ?? item.role,
-                banned: typeof result.banned === 'boolean' ? result.banned : item.banned,
-              },
-        ),
-      );
+      if (removing) {
+        setUsers((current) => current.filter((item) => item.id !== user.id));
+        setPendingRemoval(null);
+        toast(`${user.name} was removed.`, 'success');
+      } else {
+        setUsers((current) =>
+          current.map((item) => item.id !== user.id ? item : {
+            ...item,
+            role: result.role ?? item.role,
+            banned: typeof result.banned === 'boolean' ? result.banned : item.banned,
+          }),
+        );
+        const successMessage = action === 'make-admin'
+          ? `${user.name} is now an admin.`
+          : action === 'make-recruiter'
+            ? `${user.name} is now a recruiter.`
+            : action === 'make-seeker'
+              ? `${user.name} is now a seeker.`
+              : action === 'suspend'
+                ? `${user.name} was suspended.`
+                : `${user.name} was activated.`;
+        toast(successMessage, 'success');
+      }
     } catch (reason) {
-      setActionError(reason instanceof Error ? reason.message : 'Could not update this user.');
+      const message = reason instanceof Error ? reason.message : 'Could not update this user.';
+      setActionError(message);
+      toast(message, 'error');
     } finally {
       setWorkingUser('');
     }
@@ -363,6 +386,18 @@ export default function AdminUsersPage() {
                                   : 'Suspend'}
                             </button>
                           )}
+                          {user.role !== 'admin' && user.id !== session?.user?.id && (
+                            <button
+                              onClick={() => {
+                                setActionError('');
+                                setPendingRemoval(user);
+                              }}
+                              disabled={workingUser === user.id}
+                              className="text-rose-400 transition hover:text-rose-300 disabled:opacity-50"
+                            >
+                              Remove
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -373,6 +408,39 @@ export default function AdminUsersPage() {
           )}
         </section>
       </div>
+      {pendingRemoval && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+          <section
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="remove-user-title"
+            aria-describedby="remove-user-description"
+            className="w-full max-w-md rounded-xl border border-white/10 bg-[#171719] p-5 shadow-2xl"
+          >
+            <h2 id="remove-user-title" className="text-base font-semibold text-white">Remove user?</h2>
+            <p id="remove-user-description" className="mt-2 text-sm leading-6 text-zinc-400">
+              This permanently removes <span className="font-medium text-zinc-200">{pendingRemoval.name}</span> and their sign-in accounts. Their application history will remain.
+            </p>
+            {actionError && <p role="alert" className="mt-3 text-xs text-rose-300">{actionError}</p>}
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                onClick={() => setPendingRemoval(null)}
+                disabled={workingUser === pendingRemoval.id}
+                className="rounded-md border border-white/10 px-3 py-2 text-xs text-zinc-300 hover:bg-white/5 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => runAction(pendingRemoval, 'remove')}
+                disabled={workingUser === pendingRemoval.id}
+                className="rounded-md bg-rose-500 px-3 py-2 text-xs font-medium text-white hover:bg-rose-400 disabled:opacity-50"
+              >
+                {workingUser === pendingRemoval.id ? 'Removing…' : 'Remove user'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
