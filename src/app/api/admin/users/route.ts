@@ -64,18 +64,31 @@ export async function PATCH(request: Request) {
   try {
     const body = await request.json() as { userId?: string; action?: string };
     const userId = body.userId?.trim();
-    if (!userId || !['make-recruiter', 'make-seeker', 'suspend', 'activate'].includes(body.action ?? '')) {
+    if (!userId || !['make-admin', 'make-recruiter', 'make-seeker', 'suspend', 'activate'].includes(body.action ?? '')) {
       return NextResponse.json({ error: 'Invalid user action.' }, { status: 400 });
     }
 
-    const databaseId = ObjectId.isValid(userId) ? new ObjectId(userId) : userId;
-    const target = await database.collection<UserDocument>('user').findOne({ _id: databaseId }, { projection: { role: 1 } });
+    const databaseIds: Array<ObjectId | string> = ObjectId.isValid(userId)
+      ? [new ObjectId(userId), userId]
+      : [userId];
+    const target = await database.collection<UserDocument>('user').findOne(
+      { _id: { $in: databaseIds } },
+      { projection: { role: 1 } },
+    );
     if (!target) return NextResponse.json({ error: 'User not found.' }, { status: 404 });
 
-    if (body.action === 'make-recruiter' || body.action === 'make-seeker') {
-      if (target.role === 'admin') return NextResponse.json({ error: 'Admin roles cannot be changed here.' }, { status: 400 });
-      const nextRole = body.action === 'make-recruiter' ? 'recruiter' : 'seeker';
-      await auth.api.setRole({ body: { userId, role: nextRole }, headers: headersList });
+    if (body.action === 'make-admin' || body.action === 'make-recruiter' || body.action === 'make-seeker') {
+      if (userId === session.user.id) return NextResponse.json({ error: 'You cannot change your own role.' }, { status: 400 });
+      const nextRole = body.action === 'make-admin' ? 'admin' : body.action === 'make-recruiter' ? 'recruiter' : 'seeker';
+      if (target.role === 'admin' && nextRole !== 'admin') {
+        const adminCount = await database.collection<UserDocument>('user').countDocuments({ role: 'admin' });
+        if (adminCount <= 1) return NextResponse.json({ error: 'The last administrator cannot be demoted.' }, { status: 400 });
+      }
+      const update = await database.collection<UserDocument>('user').updateOne(
+        { _id: target._id },
+        { $set: { role: nextRole, updatedAt: new Date() } },
+      );
+      if (!update.matchedCount) return NextResponse.json({ error: 'User not found.' }, { status: 404 });
       return NextResponse.json({ userId, role: nextRole });
     }
 
@@ -87,11 +100,18 @@ export async function PATCH(request: Request) {
     }
 
     if (body.action === 'suspend') {
-      await auth.api.banUser({ body: { userId, banReason: 'Suspended by an administrator' }, headers: headersList });
+      await database.collection<UserDocument>('user').updateOne(
+        { _id: target._id },
+        { $set: { banned: true, banReason: 'Suspended by an administrator', banExpires: null, updatedAt: new Date() } },
+      );
+      await database.collection('session').deleteMany({ userId: { $in: databaseIds } });
       return NextResponse.json({ userId, banned: true });
     }
 
-    await auth.api.unbanUser({ body: { userId }, headers: headersList });
+    await database.collection<UserDocument>('user').updateOne(
+      { _id: target._id },
+      { $set: { banned: false, banReason: null, banExpires: null, updatedAt: new Date() } },
+    );
     return NextResponse.json({ userId, banned: false });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Could not update this user.';

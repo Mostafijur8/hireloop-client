@@ -64,6 +64,7 @@ export const dashboardByRole: Record<
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard/admin' },
       { label: 'Users', icon: Users, href: '/dashboard/admin/users' },
+      { label: 'Applications', icon: FileText, href: '/dashboard/admin/applications' },
       { label: 'Jobs', icon: BriefcaseBusiness },
       { label: 'Organizations', icon: Building2 },
       { label: 'Settings', icon: Settings },
