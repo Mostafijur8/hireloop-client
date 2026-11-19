@@ -63,7 +63,7 @@ export const dashboardByRole: Record<
     action: 'Invite Member',
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard/admin' },
-      { label: 'People', icon: Users },
+      { label: 'Users', icon: Users, href: '/dashboard/admin/users' },
       { label: 'Jobs', icon: BriefcaseBusiness },
       { label: 'Organizations', icon: Building2 },
       { label: 'Settings', icon: Settings },
