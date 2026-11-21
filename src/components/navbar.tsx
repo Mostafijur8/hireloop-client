@@ -9,7 +9,7 @@ import { authClient, useSession } from '@/lib/auth-client';
 import { useToast } from '@/components/toast-provider';
 import { NavbarDesktop } from './navbar-desktop';
 import { NavbarMobile } from './navbar-mobile';
-import { dashboardByRole, isUserRole } from '@/components/dashboard/sidebar/app-sidebar-config';
+import { dashboardByRole, isUserRole } from '@/features/dashboard/components/sidebar/app-sidebar-config';
 
 /** Responsive public navigation and sign-in state actions. */
 export function Navbar() {

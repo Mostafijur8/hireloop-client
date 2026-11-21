@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/components/toast-provider';
 import { useSession } from '@/lib/auth-client';
-import getJobs from '@/lib/api/jobs';
+import { getJobs } from '@/features/jobs/queries';
 import type { JobListing } from './job-listing-types';
 import { JobListingsTable } from './job-listings-table';
 

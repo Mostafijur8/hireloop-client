@@ -96,7 +96,8 @@ export default function AdminApplicationsPage() {
       );
       toast(`${application.applicantName}'s application moved to ${status}.`, 'success');
     } catch (reason) {
-      const message = reason instanceof Error ? reason.message : 'Could not update application status.';
+      const message =
+        reason instanceof Error ? reason.message : 'Could not update application status.';
       setActionError(message);
       toast(message, 'error');
     } finally {

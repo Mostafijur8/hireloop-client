@@ -1,5 +1,5 @@
 import { Building2, ChevronDown } from "lucide-react";
-import { JOB_TYPES, type JobType } from "@/types/job";
+import { JOB_TYPES, type JobType } from "@/features/jobs/types";
 import { fieldClass, labelClass } from "./form-styles";
 import { JobFormSection } from "./job-form-section";
 

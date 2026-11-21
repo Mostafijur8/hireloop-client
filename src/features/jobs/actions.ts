@@ -1,9 +1,9 @@
-import type { Job } from '@/types/job';
+import type { Job } from '@/features/jobs/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
 
 // Job data backend API-তে পাঠায় এবং server error-কে readable error হিসেবে ফেরায়।
-export async function createjob(data: Job) {
+export async function createJob(data: Job) {
   const response = await fetch(`${API_URL}/jobs`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

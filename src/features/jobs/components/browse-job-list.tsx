@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { BriefcaseBusiness, MapPin } from 'lucide-react';
-import type { JobRecord } from '@/types/job';
+import type { JobRecord } from '@/features/jobs/types';
 
 type ApplicationListResponse = {
   applications?: { jobId?: string }[];

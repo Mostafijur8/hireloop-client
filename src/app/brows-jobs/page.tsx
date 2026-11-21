@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { Navbar } from '@/components/navbar';
 import { Search, Sparkles } from 'lucide-react';
-import Getjobs from '@/lib/api/jobs';
-import type { JobRecord } from '@/types/job';
-import { BrowseJobList } from '@/components/browse-job-list';
+import { getJobs } from '@/features/jobs/queries';
+import type { JobRecord } from '@/features/jobs/types';
+import { BrowseJobList } from '@/features/jobs/components/browse-job-list';
 
 const jobTypes = ['Full-time', 'Part-time', 'Contract', 'Internship'];
 
@@ -25,7 +25,7 @@ export default async function BrowseJobs({
   const searchText = typeof search.q === 'string' ? search.q.trim().toLowerCase() : '';
   const apiQuery = new URLSearchParams(query);
   apiQuery.delete('q');
-  const data = await Getjobs(apiQuery.toString());
+  const data = await getJobs(apiQuery.toString());
   const allJobs = (Array.isArray(data) ? data : (data?.jobs ?? [])) as JobRecord[];
   const jobs = searchText
     ? allJobs.filter((job) => {

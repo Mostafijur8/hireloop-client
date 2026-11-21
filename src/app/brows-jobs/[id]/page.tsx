@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { ApplyButton } from '@/components/apply-button';
+import { ApplyButton } from '@/features/jobs/components/apply-button';
 import { Navbar } from '@/components/navbar';
 import { ArrowLeft, Bookmark, BriefcaseBusiness, Building2, Clock3, MapPin } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import type { JobRecord } from '@/types/job';
+import type { JobRecord } from '@/features/jobs/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
 type JobDetailsData = JobRecord & {

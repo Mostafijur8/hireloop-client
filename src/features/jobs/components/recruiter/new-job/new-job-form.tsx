@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { useToast } from '@/components/toast-provider';
 import { useSession } from '@/lib/auth-client';
-import { createjob } from '@/lib/action/jobs';
-import type { Job, JobType } from '@/types/job';
+import { createJob } from '@/features/jobs/actions';
+import type { Job, JobType } from '@/features/jobs/types';
 import { BasicInformationSection } from './basic-information-section';
 import { LocationCompensationSection } from './location-compensation-section';
 import { ResponsibilitiesSection } from './responsibilities-section';
@@ -69,7 +69,7 @@ export default function NewJobForm() {
     };
 
     try {
-      await createjob(job);
+      await createJob(job);
       setSubmitMessage('Job published successfully.');
       toast('Job published successfully.', 'success');
       form.reset();

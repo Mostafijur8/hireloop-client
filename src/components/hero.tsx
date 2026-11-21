@@ -1,5 +1,5 @@
 import Image from "next/image";
-import globe from "@/images/globe.png";
+import globe from "@/assets/images/globe.png";
 import { ArrowUpRight, MapPin, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroStats } from "./hero-stats";

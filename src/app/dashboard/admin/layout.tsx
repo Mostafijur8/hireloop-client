@@ -1,4 +1,4 @@
-import { requireRole } from '@/core/server';
+import { requireRole } from '@/lib/server/auth';
 
 
 const AdminLayout = async ({ children }: { children: React.ReactNode }) => {

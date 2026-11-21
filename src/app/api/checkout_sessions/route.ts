@@ -1,4 +1,4 @@
-import { getSession } from '@/core/server';
+import { getSession } from '@/lib/server/auth';
 import { NextResponse } from 'next/server';
 import { database } from '@/lib/mongodb';
 import { stripe } from '@/lib/stripe';

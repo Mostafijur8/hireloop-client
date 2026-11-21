@@ -1,4 +1,4 @@
-import { getSession } from '@/core/server';
+import { getSession } from '@/lib/server/auth';
 import { Navbar } from '@/components/navbar';
 import { CreditCard } from 'lucide-react';
 import Link from 'next/link';

@@ -1,4 +1,4 @@
-import { requireRole } from '@/core/server';
+import { requireRole } from '@/lib/server/auth';
 import React from 'react';
 
 

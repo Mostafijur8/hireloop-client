@@ -2,7 +2,7 @@
 
 import { Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { deleteJob } from "@/lib/action/jobs";
+import { deleteJob } from "@/features/jobs/actions";
 import {
   AlertDialog,
   AlertDialogAction,

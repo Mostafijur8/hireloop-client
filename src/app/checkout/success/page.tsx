@@ -1,4 +1,4 @@
-import { getSession } from '@/core/server';
+import { getSession } from '@/lib/server/auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { database } from '@/lib/mongodb';
