@@ -15,12 +15,24 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  // Use MongoDB-backed limits so counters are shared across app instances.
+  rateLimit: {
+    enabled: true,
+    window: 60,
+    max: 100,
+    storage: 'database',
+    customRules: {
+      '/sign-in/email': { window: 60, max: 5 },
+      '/sign-up/email': { window: 60, max: 5 },
+    },
+  },
   user: {
     additionalFields: {
       role: {
         type: ['seeker', 'recruiter', 'admin'],
         defaultValue: 'seeker',
-        input: true,
+        // Roles are assigned by trusted server/admin actions, never signup input.
+        input: false,
       },
     },
   },

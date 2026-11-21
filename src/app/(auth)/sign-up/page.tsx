@@ -8,8 +8,6 @@ import { AuthShell } from "@/app/(auth)/auth-shell";
 import { useToast } from "@/components/toast-provider";
 import { authClient } from "@/lib/auth-client";
 
-type RequestedRole = "seeker" | "recruiter" | "admin";
-
 /** Handles account creation and composes the shared authentication UI. */
 export default function SignUpPage() {
   const { toast } = useToast();
@@ -28,7 +26,6 @@ export default function SignUpPage() {
         name: String(form.get("name") ?? "").trim(),
         email: String(form.get("email") ?? "").trim(),
         password: String(form.get("password") ?? ""),
-        role: String(form.get("requestedRole") ?? "seeker") as RequestedRole,
         callbackURL: "/",
       });
       if (signUpError) {
