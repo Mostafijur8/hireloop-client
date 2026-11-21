@@ -1,7 +1,6 @@
-import { headers } from 'next/headers';
+import { getSession } from '@/core/server';
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
-import { auth } from '@/lib/auth';
 import { database } from '@/lib/mongodb';
 
 type ApplicationDocument = {
@@ -27,7 +26,7 @@ type ApplicationDocument = {
 const statuses = ['Applied', 'Review', 'Shortlisted', 'Rejected', 'Offered'] as const;
 
 export async function GET() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
 
   if (!session?.user) {
     return NextResponse.json({ error: 'Please sign in to view applications.' }, { status: 401 });
@@ -78,7 +77,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
 
   if (!session?.user) {
     return NextResponse.json({ error: 'Please sign in to apply.' }, { status: 401 });

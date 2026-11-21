@@ -1,7 +1,6 @@
-import { headers } from 'next/headers';
+import { getSession } from '@/core/server';
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
-import { auth } from '@/lib/auth';
 import { database } from '@/lib/mongodb';
 
 type UserDocument = {
@@ -16,7 +15,7 @@ type UserDocument = {
 };
 
 export async function GET() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
 
   if (!session?.user) {
     return NextResponse.json({ error: 'Please sign in to view users.' }, { status: 401 });
@@ -51,8 +50,7 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const headersList = await headers();
-  const session = await auth.api.getSession({ headers: headersList });
+  const session = await getSession();
 
   if (!session?.user) {
     return NextResponse.json({ error: 'Please sign in to manage users.' }, { status: 401 });
@@ -120,7 +118,7 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session?.user) {
     return NextResponse.json({ error: 'Please sign in to manage users.' }, { status: 401 });
   }

@@ -1,7 +1,6 @@
+import { getSession } from '@/core/server';
 import Link from 'next/link';
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
 import { database } from '@/lib/mongodb';
 import { stripe } from '@/lib/stripe';
 
@@ -17,7 +16,7 @@ export default async function CheckoutSuccessPage({
   if (!sessionId) redirect('/payment');
 
   // লগইন করা ব্যবহারকারীর তথ্য যাচাই করা হয়।
-  const userSession = await auth.api.getSession({ headers: await headers() });
+  const userSession = await getSession();
   if (!userSession?.user) redirect('/sign-in?callbackUrl=%2Fpayment');
 
   // Stripe থেকে সেশনের আসল তথ্য আনা হয়; ব্যর্থ হলে payment পেজে ফেরত যায়।

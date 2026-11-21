@@ -1,12 +1,11 @@
+import { getSession } from '@/core/server';
 import { Navbar } from '@/components/navbar';
 import { CreditCard } from 'lucide-react';
-import { headers } from 'next/headers';
 import Link from 'next/link';
-import { auth } from '@/lib/auth';
 import { database } from '@/lib/mongodb';
 
 export default async function PaymentPage({ searchParams }: { searchParams: Promise<{ canceled?: string }> }) {
-  const user = await auth.api.getSession({ headers: await headers() });
+  const user = await getSession();
   const { canceled } = await searchParams;
   const hasPaidAccess = user?.user
     ? Boolean(await database.collection('payments').findOne({ userId: user.user.id }))

@@ -1,7 +1,6 @@
-import { headers } from 'next/headers';
+import { getSession } from '@/core/server';
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
-import { auth } from '@/lib/auth';
 import { database } from '@/lib/mongodb';
 
 type ApplicationDocument = {
@@ -25,7 +24,7 @@ function idCandidates(values: string[]) {
 }
 
 async function requireAdmin() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session?.user) return { error: NextResponse.json({ error: 'Please sign in to manage applications.' }, { status: 401 }) };
   if ((session.user as typeof session.user & { role?: string }).role !== 'admin') {
     return { error: NextResponse.json({ error: 'Admin access is required.' }, { status: 403 }) };

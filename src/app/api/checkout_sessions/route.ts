@@ -1,11 +1,10 @@
-import { headers } from 'next/headers';
+import { getSession } from '@/core/server';
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
 import { database } from '@/lib/mongodb';
 import { stripe } from '@/lib/stripe';
 
 export async function POST(request: Request) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session?.user) {
     return NextResponse.redirect(new URL('/sign-in?callbackUrl=%2Fpayment', request.url), 303);
   }
