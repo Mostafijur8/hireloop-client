@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Users } from 'lucide-react';
+import Image from 'next/image';
 
 type Applicant = {
   _id: string;
@@ -96,7 +97,7 @@ export default function ApplicantsPage() {
                 <tbody className="divide-y divide-[#29292f]">
                   {job.applicants.map((applicant) => (
                     <tr key={applicant._id} className="transition hover:bg-white/[.025]">
-                      <td className="px-5 py-3.5"><div className="flex items-center gap-3">{applicant.seeker?.image ? <img src={applicant.seeker.image} alt="" className="size-9 rounded-full border border-white/10 object-cover" /> : <div className="flex size-9 items-center justify-center rounded-full bg-[#302b52] text-xs font-semibold text-[#c9c1ff]">{(applicant.seeker?.name ?? '?').slice(0, 1).toUpperCase()}</div>}<span className="text-sm font-medium text-white">{applicant.seeker?.name ?? 'Name unavailable'}</span></div></td>
+                      <td className="px-5 py-3.5"><div className="flex items-center gap-3">{applicant.seeker?.image ? <Image src={applicant.seeker.image} alt="" width={36} height={36} unoptimized className="size-9 rounded-full border border-white/10 object-cover" /> : <div className="flex size-9 items-center justify-center rounded-full bg-[#302b52] text-xs font-semibold text-[#c9c1ff]">{(applicant.seeker?.name ?? '?').slice(0, 1).toUpperCase()}</div>}<span className="text-sm font-medium text-white">{applicant.seeker?.name ?? 'Name unavailable'}</span></div></td>
                       <td className="px-5 py-3.5 text-xs text-[#aaaab2]">{applicant.seeker?.email ?? 'Email unavailable'}</td>
                       <td className="whitespace-nowrap px-5 py-3.5 text-xs text-[#aaaab2]">{formatAppliedTime(applicant.appliedAt)}</td>
                       <td className="px-5 py-3.5"><span className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-medium ${statusStyle(applicant.status)}`}>{applicant.status ?? 'Applied'}</span></td>

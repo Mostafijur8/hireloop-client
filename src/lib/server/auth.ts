@@ -5,7 +5,18 @@ import { auth } from '@/lib/auth';
 
 /** Returns the current request's Better Auth session on the server. */
 export async function getSession() {
-  return auth.api.getSession({ headers: await headers() });
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) return session;
+
+  // Older accounts may have the selected signup role even if their initial
+  // user record kept Better Auth's default role.
+  const role =
+    session.user.role === 'admin' || session.user.role === 'recruiter'
+      ? session.user.role
+      : session.user.signupRole === 'recruiter'
+        ? 'recruiter'
+        : 'seeker';
+  return { ...session, user: { ...session.user, role } };
 }
 
 /** Redirects users who do not have the requested role. */

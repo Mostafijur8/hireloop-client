@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import { navbarLinks } from './navbar-links';
 
 type NavbarDesktopProps = {
@@ -6,6 +7,7 @@ type NavbarDesktopProps = {
   isSignedIn: boolean;
   dashboardHref: string;
   userName?: string;
+  userImage?: string;
   onSignOut: () => void;
 };
 
@@ -15,6 +17,7 @@ export function NavbarDesktop({
   isSignedIn,
   dashboardHref,
   userName,
+  userImage,
   onSignOut,
 }: NavbarDesktopProps) {
   return (
@@ -38,7 +41,12 @@ export function NavbarDesktop({
             >
               Dashboard
             </a>
-            <span className="text-[12px] text-white">Welcome, {userName || 'there'}</span>
+            <span className="flex items-center gap-2 text-[12px] text-white">
+              {userImage ? (
+                <Image src={userImage} alt="" width={28} height={28} unoptimized className="size-7 rounded-full border border-white/15 object-cover" />
+              ) : null}
+              Welcome, {userName || 'there'}
+            </span>
             <Button
               type="button"
               variant="ghost"

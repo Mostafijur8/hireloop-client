@@ -18,10 +18,7 @@ export default function ManageJobsPage() {
   useEffect(() => {
     const recruiterId = session?.user?.id;
     if (isPending) return;
-    if (!recruiterId) {
-      setJobRows([]);
-      return;
-    }
+    if (!recruiterId) return;
 
     getJobs(`recruiterId=${encodeURIComponent(recruiterId)}`)
       .then((data) => {

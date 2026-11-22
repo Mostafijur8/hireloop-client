@@ -51,13 +51,16 @@ export const auth = betterAuth({
           },
         }),
       },
+      update: {
+        // Signup role is a one-time choice and cannot be changed through the
+        // normal user profile update endpoint.
+        before: async (user) => {
+          const data = { ...user };
+          delete data.signupRole;
+          return { data };
+        },
+      },
     },
   },
   plugins: [admin()],
-  socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    },
-  },
 });

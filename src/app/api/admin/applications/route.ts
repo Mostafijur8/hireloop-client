@@ -3,6 +3,18 @@ import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 import { database } from '@/lib/mongodb';
 
+type ApplicantUser = {
+  _id: string | ObjectId;
+  name?: string;
+  email?: string;
+};
+
+type JobRecord = {
+  _id: string | ObjectId;
+  title?: string;
+  companyName?: string;
+};
+
 type ApplicationDocument = {
   _id: ObjectId;
   seekerId?: string;
@@ -42,8 +54,8 @@ export async function GET() {
     const userIds = applications.map((app) => app.seekerId ?? app.userId).filter((id): id is string => Boolean(id));
     const jobIds = applications.map((app) => app.jobId?.toString()).filter((id): id is string => Boolean(id));
     const [users, jobs] = await Promise.all([
-      userIds.length ? database.collection('user').find({ _id: { $in: idCandidates(userIds) } }, { projection: { name: 1, email: 1 } }).toArray() : [],
-      jobIds.length ? database.collection('jobs').find({ _id: { $in: idCandidates(jobIds) } }).toArray() : [],
+      userIds.length ? database.collection<ApplicantUser>('user').find({ _id: { $in: idCandidates(userIds) } }, { projection: { name: 1, email: 1 } }).toArray() : [],
+      jobIds.length ? database.collection<JobRecord>('jobs').find({ _id: { $in: idCandidates(jobIds) } }).toArray() : [],
     ]);
     const usersById = new Map(users.map((user) => [user._id.toString(), user]));
     const jobsById = new Map(jobs.map((job) => [job._id.toString(), job]));

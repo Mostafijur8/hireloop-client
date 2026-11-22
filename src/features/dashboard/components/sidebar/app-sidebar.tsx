@@ -15,7 +15,12 @@ export function AppSidebar() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const router = useRouter();
-  const role = isUserRole(session?.user?.role) ? session.user.role : 'seeker';
+  const sessionRole = session?.user?.role === 'recruiter' || session?.user?.role === 'admin'
+    ? session.user.role
+    : session?.user?.signupRole === 'recruiter'
+      ? 'recruiter'
+      : session?.user?.role;
+  const role = isUserRole(sessionRole) ? sessionRole : 'seeker';
   const workspace = dashboardByRole[role];
   const activeHref = workspace.items
     .map((item) => item.href)

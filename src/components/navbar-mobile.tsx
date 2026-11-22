@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { navbarLinks } from "./navbar-links";
 
 type NavbarMobileProps = {
@@ -7,6 +8,7 @@ type NavbarMobileProps = {
   isSignedIn: boolean;
   dashboardHref: string;
   userName?: string;
+  userImage?: string;
   onClose: () => void;
   onSignOut: () => void;
 };
@@ -18,6 +20,7 @@ export function NavbarMobile({
   isSignedIn,
   dashboardHref,
   userName,
+  userImage,
   onClose,
   onSignOut,
 }: NavbarMobileProps) {
@@ -48,7 +51,10 @@ export function NavbarMobile({
               >
                 Dashboard
               </a>
-              <span className="px-3 py-2 text-sm text-white">
+              <span className="flex items-center gap-2 px-3 py-2 text-sm text-white">
+                {userImage ? (
+                  <Image src={userImage} alt="" width={28} height={28} unoptimized className="size-7 rounded-full border border-white/15 object-cover" />
+                ) : null}
                 Welcome, {userName || "there"}
               </span>
               <Button

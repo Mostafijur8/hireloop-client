@@ -8,6 +8,28 @@ import { AuthShell } from '@/app/(auth)/auth-shell';
 import { useToast } from '@/components/toast-provider';
 import { authClient } from '@/lib/auth-client';
 
+async function imageFileToDataUrl(file: File) {
+  const bitmap = await createImageBitmap(file);
+  const maxDimension = 256;
+  const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('Could not process the selected image.');
+  context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+
+  const imageBlob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.82));
+  if (!imageBlob) throw new Error('Could not process the selected image.');
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => typeof reader.result === 'string' ? resolve(reader.result) : reject(new Error('Could not read the selected image.'));
+    reader.onerror = () => reject(new Error('Could not read the selected image.'));
+    reader.readAsDataURL(imageBlob);
+  });
+}
+
 /** Handles account creation and composes the shared authentication UI. */
 export default function SignUpPage() {
   const { toast } = useToast();
@@ -22,11 +44,22 @@ export default function SignUpPage() {
     setError('');
     const form = new FormData(event.currentTarget);
     try {
+      const selectedFile = form.get('profileImage');
+      const imageUrl = String(form.get('imageUrl') ?? '').trim();
+      let image: string | undefined;
+      if (selectedFile instanceof File && selectedFile.size > 0) {
+        if (!selectedFile.type.startsWith('image/')) throw new Error('Please choose an image file.');
+        if (selectedFile.size > 8 * 1024 * 1024) throw new Error('Please choose an image smaller than 8 MB.');
+        image = await imageFileToDataUrl(selectedFile);
+      } else if (imageUrl) {
+        image = imageUrl;
+      }
       const { error: signUpError } = await authClient.signUp.email({
         name: String(form.get('name') ?? '').trim(),
         email: String(form.get('email') ?? '').trim(),
         password: String(form.get('password') ?? ''),
         signupRole: form.get('role') === 'recruiter' ? 'recruiter' : 'seeker',
+        ...(image ? { image } : {}),
         callbackURL: '/',
       });
       if (signUpError) {
@@ -38,8 +71,8 @@ export default function SignUpPage() {
         router.replace('/');
         router.refresh();
       }
-    } catch {
-      const message = "Couldn't connect. Please try again.";
+    } catch (signupError) {
+      const message = signupError instanceof Error ? signupError.message : "Couldn't connect. Please try again.";
       setError(message);
       toast(message, 'error');
     } finally {

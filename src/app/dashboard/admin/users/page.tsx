@@ -47,6 +47,7 @@ export default function AdminUsersPage() {
   const [actionError, setActionError] = useState('');
   const [workingUser, setWorkingUser] = useState('');
   const [pendingRemoval, setPendingRemoval] = useState<User | null>(null);
+  const [now, setNow] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -54,7 +55,10 @@ export default function AdminUsersPage() {
       .then(async (response) => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error ?? 'Could not load users.');
-        if (active) setUsers(data.users ?? []);
+        if (active) {
+          setUsers(data.users ?? []);
+          setNow(Date.now());
+        }
       })
       .catch((reason: unknown) => {
         if (active) {
@@ -82,7 +86,7 @@ export default function AdminUsersPage() {
   );
 
   const metrics = useMemo(() => {
-    const sinceYesterday = Date.now() - 24 * 60 * 60 * 1000;
+    const sinceYesterday = now - 24 * 60 * 60 * 1000;
     return [
       {
         label: 'Total users',
@@ -115,7 +119,7 @@ export default function AdminUsersPage() {
         color: 'text-amber-400',
       },
     ];
-  }, [users]);
+  }, [users, now]);
 
   function exportUsers() {
     const rows = [

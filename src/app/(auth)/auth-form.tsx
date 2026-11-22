@@ -36,6 +36,32 @@ export function AuthForm({
       )}
       {isSignUp && (
         <fieldset className="space-y-2">
+          <legend className="text-sm font-medium text-zinc-200">
+            Profile image <span className="font-normal text-zinc-500">(optional)</span>
+          </legend>
+          <input
+            autoComplete="url"
+            name="imageUrl"
+            type="url"
+            placeholder="Paste an image URL"
+            className={inputClass}
+          />
+          <label className="block space-y-2 text-xs font-normal text-zinc-400">
+            Or choose an image file
+            <input
+              accept="image/*"
+              name="profileImage"
+              type="file"
+              className="block w-full rounded-xl border border-white/10 bg-white/[0.03] p-2 text-xs text-zinc-400 file:mr-3 file:rounded-lg file:border-0 file:bg-violet-500/15 file:px-3 file:py-2 file:text-xs file:font-medium file:text-violet-200"
+            />
+          </label>
+          <p className="text-xs font-normal text-zinc-500">
+            If you add both, the selected file will be used.
+          </p>
+        </fieldset>
+      )}
+      {isSignUp && (
+        <fieldset className="space-y-2">
           <legend className="text-sm font-medium text-zinc-200">I’m signing up as</legend>
           <div className="grid grid-cols-2 gap-3">
             {[
@@ -55,7 +81,9 @@ export function AuthForm({
                 />
                 <span>
                   <span className="block font-medium text-zinc-100">{option.label}</span>
-                  <span className="mt-0.5 block text-xs font-normal text-zinc-500">{option.description}</span>
+                  <span className="mt-0.5 block text-xs font-normal text-zinc-500">
+                    {option.description}
+                  </span>
                 </span>
               </label>
             ))}

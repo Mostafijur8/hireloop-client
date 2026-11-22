@@ -17,7 +17,11 @@ export function Navbar() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: session, isPending } = useSession();
-  const role = session?.user?.role;
+  const role = session?.user?.role === 'recruiter' || session?.user?.role === 'admin'
+    ? session.user.role
+    : session?.user?.signupRole === 'recruiter'
+      ? 'recruiter'
+      : session?.user?.role;
   const dashboardHref = isUserRole(role) ? dashboardByRole[role].url : '/dashboard/seeker';
 
   async function handleSignOut() {
@@ -53,6 +57,7 @@ export function Navbar() {
             isSignedIn={Boolean(session)}
             dashboardHref={dashboardHref}
             userName={session?.user?.name || undefined}
+            userImage={session?.user?.image || undefined}
             onSignOut={handleSignOut}
           />
           <Button
@@ -74,6 +79,7 @@ export function Navbar() {
           isSignedIn={Boolean(session)}
           dashboardHref={dashboardHref}
           userName={session?.user?.name || undefined}
+          userImage={session?.user?.image || undefined}
           onClose={() => setMenuOpen(false)}
           onSignOut={handleSignOut}
         />
