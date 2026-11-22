@@ -9,7 +9,10 @@ import { authClient, useSession } from '@/lib/auth-client';
 import { useToast } from '@/components/toast-provider';
 import { NavbarDesktop } from './navbar-desktop';
 import { NavbarMobile } from './navbar-mobile';
-import { dashboardByRole, isUserRole } from '@/features/dashboard/components/sidebar/app-sidebar-config';
+import {
+  dashboardByRole,
+  isUserRole,
+} from '@/features/dashboard/components/sidebar/app-sidebar-config';
 
 /** Responsive public navigation and sign-in state actions. */
 export function Navbar() {
@@ -17,11 +20,12 @@ export function Navbar() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: session, isPending } = useSession();
-  const role = session?.user?.role === 'recruiter' || session?.user?.role === 'admin'
-    ? session.user.role
-    : session?.user?.signupRole === 'recruiter'
-      ? 'recruiter'
-      : session?.user?.role;
+  const role =
+    session?.user?.role === 'recruiter' || session?.user?.role === 'admin'
+      ? session.user.role
+      : session?.user?.signupRole === 'recruiter'
+        ? 'recruiter'
+        : session?.user?.role;
   const dashboardHref = isUserRole(role) ? dashboardByRole[role].url : '/dashboard/seeker';
 
   async function handleSignOut() {
@@ -40,7 +44,7 @@ export function Navbar() {
 
   return (
     <nav aria-label="Main navigation" className="w-full bg-black px-4 py-3 sm:px-8">
-      <div className="mx-auto w-full max-w-[1200px] rounded-xl border  border-white/[0.30] bg-black px-3 sm:px-4">
+      <div className="mx-auto w-full max-w-[1200px] rounded-xl border   border-white/[0.30] bg-black px-3 py-2 sm:px-4">
         <div className="flex min-h-12 items-center justify-between ">
           <Link
             href="/"
