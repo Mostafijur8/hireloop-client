@@ -26,6 +26,7 @@ export default function SignUpPage() {
         name: String(form.get('name') ?? '').trim(),
         email: String(form.get('email') ?? '').trim(),
         password: String(form.get('password') ?? ''),
+        signupRole: form.get('role') === 'recruiter' ? 'recruiter' : 'seeker',
         callbackURL: '/',
       });
       if (signUpError) {

@@ -31,8 +31,25 @@ export const auth = betterAuth({
       role: {
         type: ['seeker', 'recruiter', 'admin'],
         defaultValue: 'seeker',
-        // Roles are assigned by trusted server/admin actions, never signup input.
+        // The admin plugin's role field stays server-controlled.
         input: false,
+      },
+      signupRole: {
+        type: ['seeker', 'recruiter'],
+        defaultValue: 'seeker',
+        input: true,
+      },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => ({
+          data: {
+            ...user,
+            role: user.signupRole === 'recruiter' ? 'recruiter' : 'seeker',
+          },
+        }),
       },
     },
   },

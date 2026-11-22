@@ -34,6 +34,34 @@ export function AuthForm({
           />
         </label>
       )}
+      {isSignUp && (
+        <fieldset className="space-y-2">
+          <legend className="text-sm font-medium text-zinc-200">I’m signing up as</legend>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { value: 'seeker', label: 'Job seeker', description: 'Find your next opportunity' },
+              { value: 'recruiter', label: 'Recruiter', description: 'Hire great people' },
+            ].map((option) => (
+              <label
+                key={option.value}
+                className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm transition has-[:checked]:border-violet-400/70 has-[:checked]:bg-violet-500/10"
+              >
+                <input
+                  className="mt-1 accent-violet-400"
+                  type="radio"
+                  name="role"
+                  value={option.value}
+                  defaultChecked={option.value === 'seeker'}
+                />
+                <span>
+                  <span className="block font-medium text-zinc-100">{option.label}</span>
+                  <span className="mt-0.5 block text-xs font-normal text-zinc-500">{option.description}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
       <label className="block space-y-2 text-sm font-medium text-zinc-200">
         Email address
         <input
@@ -45,11 +73,6 @@ export function AuthForm({
           className={inputClass}
         />
       </label>
-      {isSignUp && (
-        <p className="text-xs text-zinc-500">
-          New accounts start as job seekers. An administrator can grant additional access.
-        </p>
-      )}
       <label className="block space-y-2 text-sm font-medium text-zinc-200">
         Password
         <span className="relative block">
